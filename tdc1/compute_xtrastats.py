@@ -50,12 +50,12 @@ def variostats(lcs):
 	
 
 
+#for rung in [4]:
+#	for pair in pycs.tdc.util.listtdc1v2pairs():
 	
-#for rung in [0, 1, 2, 3, 4]:
-#	for pair in pycs.tdc.util.listtdc1v2pairs():
+for rung in [0, 1, 2, 3, 4]:
+	for pair in pycs.tdc.util.listtdc1v2pairs():
 
-#for rung in [0]:
-#	for pair in pycs.tdc.util.listtdc1v2pairs():
 
 		relfilepath = pycs.tdc.util.tdcfilepath(set="tdc1", rung=rung, pair=pair, skipset=False)
 		outpath = os.path.join(xtrastatsdir, relfilepath+".stats.pkl")
