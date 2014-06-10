@@ -1,21 +1,11 @@
 import pycs
 import os,sys
 import numpy as np
-import matplotlib.pyplot as plt
 
 """
-Determine which estimates is in which confidence level --- add this to pycs once it is cleaned.
-"""
+Determines which pair gets which confidence level
 
-
-# Start with import of db...
-
-iniests = pycs.tdc.est.importfromd3cs("web/d3cslog.txt")
-
-
-
-"""
-confidence:
+confidence level description: THIS IS NOT UP TO DATE !
 
 doubtless : 2x single doubtless estimates where meanestimates +- 2sigma includes the two estimates
 plausible : 1x doubtless and 1x plausible estimates that matches
@@ -23,16 +13,18 @@ plausible : 1x doubtless and 1x plausible estimates that matches
 These two makes 67% of the estimates...
 ... see other criterias in the code below
 
-
 """
+
+execfile("config.py")
+
+
+iniests = pycs.tdc.est.importfromd3cs(d3cslogpath)
+
 
 groupests = pycs.tdc.est.group(iniests)
 
-#pycs.gen.util.writepickle(groupests,'groupests.pkl')
 
-
-
-basedir = '' # Where do you want the .pkl files grouping the estimates to be written...S 
+basedir = './results_tdc1/combi_confidence_ids' # Where do you want the .pkl files grouping the estimates to be written...S 
 
 #groupests = pycs.gen.util.readpickle('groupests.pkl')
 
@@ -40,9 +32,10 @@ selections = ['doubtless','plausible','doubtless_to_multimodal','multimodal','do
 
 
 idconfuniques = []
+
 doubtlesses = []
 plausibles = []
-doubtless_to_multimodals = []e
+doubtless_to_multimodals = []
 multimodals = []
 doubtless_to_uninformatives = []
 uninformatives = []
@@ -108,12 +101,6 @@ if len(groupests)-1 != len(idconfuniques):
 
 # write pickles
 
-if not os.path.isdir(basedir):
-	os.mkdir(basedir)
-
-print 'removing old pkls...'	
-os.system('rm %s/*' %basedir)
-
 pycs.gen.util.writepickle(doubtlesses,os.path.join(basedir,'doubtlesses.pkl'))
 pycs.gen.util.writepickle(plausibles,os.path.join(basedir,'plausibles.pkl'))
 pycs.gen.util.writepickle(doubtless_to_multimodals,os.path.join(basedir,'doubtless_to_multimodals.pkl'))
@@ -121,11 +108,12 @@ pycs.gen.util.writepickle(multimodals,os.path.join(basedir,'multimodals.pkl'))
 pycs.gen.util.writepickle(doubtless_to_uninformatives,os.path.join(basedir,'doubtless_to_uninformatives.pkl'))
 pycs.gen.util.writepickle(uninformatives,os.path.join(basedir,'uninformatives.pkl'))
 
-print '---------------'
 
 
-sys.exit()
 
+"""
+
+import matplotlib.pyplot as plt
 
 # Now, plot these values
 
@@ -144,3 +132,4 @@ plt.xlabel('Number of pairs')
 
 
 plt.show()
+"""
