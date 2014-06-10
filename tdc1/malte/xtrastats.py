@@ -1,3 +1,17 @@
+"""
+Save some time-delay-indpendant stats about the light curves into pkl files, one per pair.
+
+
+"""
+
+datadir = "/users/mtewes/fohlen/TDC/tdc1_v2_7Apr2014"
+outdir = "/users/mtewes/fohlen/TDC/tdc1_v2_7Apr2014/xtrastats"
+
+#datadir = "/Users/mtewes/Desktop/TDC/tdc1_v2_7Apr2014"
+#outdir = "/Users/mtewes/Desktop/out"
+
+
+
 import pycs
 import os
 import numpy as np
@@ -43,9 +57,6 @@ def variostats(lcs):
 	}
 	
 
-
-datadir = "/Users/mtewes/Desktop/TDC/tdc1_v2_7Apr2014"
-outdir = "/Users/mtewes/Desktop/out"
 
 	
 for rung in [0, 1, 2, 3, 4]:
