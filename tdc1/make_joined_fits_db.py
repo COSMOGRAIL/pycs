@@ -55,13 +55,19 @@ combid3csests = pycs.tdc.est.multicombine(d3csests, method='d3cscombi1')
 
 for est in combid3csests:
 		
-	db[est.id]["d3cs_combitd"] = est.td
-	db[est.id]["d3cs_combitderr"] = est.tderr
-	db[est.id]["d3cs_combims"] = est.ms
-	db[est.id]["d3cs_combitimetaken"] = est.timetaken
-	db[est.id]["d3cs_oldcombiconfidence"] = est.confidence
+	db[est.id]["d3cs_combi_td"] = est.td
+	db[est.id]["d3cs_combi_tderr"] = est.tderr
+	db[est.id]["d3cs_combi_ms"] = est.ms
+	db[est.id]["d3cs_combi_timetaken"] = est.timetaken
+	db[est.id]["d3cs_combi_oldconfidence"] = est.confidence
 	
-	
+	db[est.id]["d3cs_combi_abstd"] = abs(est.td)
+	if est.td != 0.0:
+		db[est.id]["d3cs_combi_reltderr"] = est.tderr / abs(est.td)
+	else:
+		db[est.id]["d3cs_combi_reltderr"] = 999.0
+
+
 print "Done with D3CS..."
 ##############   xtrastats    ##############
 
@@ -80,21 +86,64 @@ for rung in range(5):
 
 
 print "Done with xtrastats..."
-
-##############   Overlap etc    ##############
+##############   Overlap    ##############
 
 # We compute a few more stats, making use of the D3CS time delays.
 
+for (key, item) in db.items(): # Loop over the full database
+	
+	if item["in_tdc1"] == 0:
+		continue # We skip these ones
+		
+	# Computing the overlap.
+	# Kind of tricky, the real equation should make use of modulos or some explicit computation I guess.
+	# Here is a fast approx for short delays, "next-season-overlap" is not counted.
+	
+	item["d3cs_overlap_per_seas_days"] = np.clip(item["meanseaslen"] - np.fabs(item["d3cs_combi_td"]), 0.0, item["meanseaslen"])
+	item["d3cs_overlap_days"] = item["nseas"]*item["d3cs_overlap_per_seas_days"]
+	item["d3cs_overlap_epochs"] = item["d3cs_overlap_days"]/item["meansampling"]
 
 
-
-
-
-
+print "Done with overlap..."
 ##############   PyCS    ##############
 
 
-# This part is very custom and preliminary for now...
+# This part is kind of custom and preliminary for now...
+
+
+def addpycs(db, estpklpath, methodname="none"):
+	"""
+	Adds the PyCS estimates from estpklpath into the db, and computes some related useful quantities.
+	"""
+	estimates = pycs.gen.util.readpickle(estpklpath)
+	for est in estimates:
+		db[est.id]["pycs_%s_td" % (methodname)] = est.td
+		db[est.id]["pycs_%s_tderr" % (methodname)] = est.tderr
+		db[est.id]["pycs_%s_ms" % (methodname)] = est.ms
+		db[est.id]["pycs_%s_timetaken" % (methodname)] = est.timetaken
+		db[est.id]["pycs_%s_confidence" % (methodname)] = est.confidence
+	
+		# The absolute delay, and the relative error:	
+		db[est.id]["pycs_%s_abstd" % (methodname)] = abs(est.td)
+		if est.td != 0.0:
+			db[est.id]["pycs_%s_reltderr" % (methodname)] = est.tderr / abs(est.td)
+		else:
+			db[est.id]["pycs_%s_reltderr" % (methodname)] = 999.0
+		
+		# The separation between PyCS and D3CS delays:
+		db[est.id]["pycs_%s_d3cs_tdsep" % (methodname)] = abs(est.td - db[est.id]["d3cs_combi_td"])
+		
+		# Same separation, expressed in terms of "sigma"
+		if est.tderr != 0.0:
+			db[est.id]["pycs_%s_d3cs_tdsep_in_pycs_errs" % (methodname)] = abs(est.td - db[est.id]["d3cs_combi_td"]) / est.tderr
+		else:
+			db[est.id]["pycs_%s_d3cs_tdsep_in_pycs_errs" % (methodname)] = 999.0
+		if db[est.id]["d3cs_combi_tderr"] != 0.0:
+			db[est.id]["pycs_%s_d3cs_tdsep_in_d3cs_errs" % (methodname)] = abs(est.td - db[est.id]["d3cs_combi_td"]) / db[est.id]["d3cs_combi_tderr"]
+		else:
+			db[est.id]["pycs_%s_d3cs_tdsep_in_d3cs_errs" % (methodname)] = 999.0
+		
+			
 
 splpkls = ["spl-dou-c20-s100-m8-uni-r0.pkl",
 "spl-dou-c20-s100-m8-uni-r1.pkl",
@@ -108,10 +157,7 @@ splpkls = ["spl-dou-c20-s100-m8-uni-r0.pkl",
 "spl-pla-c20-s100-m8-uni-r4.pkl"]
 
 for pkl in splpkls:
-	estimates = pycs.gen.util.readpickle(os.path.join(pycsresdir, pkl))
-	for est in estimates:
-		db[est.id].update({"pycs_spl_td":est.td, "pycs_spl_tderr":est.tderr, "pycs_spl_ms":est.ms, "pycs_spl_timetaken":est.timetaken, "pycs_spl_timetaken":est.timetaken})
-
+	addpycs(db, os.path.join(pycsresdir, pkl), methodname="spl")
 
 sdipkls = ["sdi-dou-c20-s100-m8-uni-r0.pkl",
 "sdi-dou-c20-s100-m8-uni-r1.pkl",
@@ -125,21 +171,16 @@ sdipkls = ["sdi-dou-c20-s100-m8-uni-r0.pkl",
 "sdi-pla-c20-s100-m8-uni-r4.pkl"]
 
 for pkl in sdipkls:
-	estimates = pycs.gen.util.readpickle(os.path.join(pycsresdir, pkl))
-	for est in estimates:
-		db[est.id].update({"pycs_sdi_td":est.td, "pycs_sdi_tderr":est.tderr, "pycs_sdi_ms":est.ms, "pycs_sdi_timetaken":est.timetaken, "pycs_sdi_timetaken":est.timetaken})
+	addpycs(db, os.path.join(pycsresdir, pkl), methodname="sdi")
 
 
 
-
-print "Done with reading PyCS results..."
-
-
+print "Done with PyCS..."
 ##############   pkl export    ##############
 
 # We keep it as a dict of dicts, it's easier to "query" in this way:
 
-pklfilepath = "test.pkl"
+pklfilepath = "joined.pkl"
 pycs.gen.util.writepickle(db, pklfilepath)
 
 
@@ -172,7 +213,7 @@ cols = [pyfits.Column(name=key, format="D", array=np.array([item.get(key) for it
 coldefs = pyfits.ColDefs(cols)
 tbhdu = pyfits.new_table(coldefs)
 
-fitsfilepath = "test.fits"
+fitsfilepath = "joined.fits"
 
 tbhdu.writeto(fitsfilepath, clobber=True)
 print "Wrote %s" % (fitsfilepath)
