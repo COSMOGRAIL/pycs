@@ -43,9 +43,10 @@ uninformatives = []
 for groupest in groupests:
 	idconfs = [(est.id,est.confidence) for est in groupest]
 	identity = idconfs[0][0]
-	if identity == 'tdc1_1_341': # skip that one, as it bug in the code (don't know why yet...)
-		print "WARNING !!!  I skip %s" % identity 
-		continue
+	
+	#if identity == 'tdc1_1_341': # skip that one, as it bug in the code (don't know why yet...)
+	#	print "WARNING !!!  I skip %s" % identity 
+	#	continue
 	
 	### now we define criteria by criteria
 	
@@ -84,6 +85,9 @@ for groupest in groupests:
 		selection=selections[5]			
 		idconfuniques.append((identity,selection))
 		uninformatives.append(identity)
+	
+	else:
+		raise RuntimeError("I didn't catch this one, should not happen !")
 
 # Check that we got all the estimates...
 
