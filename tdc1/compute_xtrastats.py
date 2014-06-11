@@ -26,7 +26,7 @@ def variostats(lcs):
 	magerrsb = lcs[1].getmagerrs()
 	
 	return {
-		"npoints":len(lcs[0]),
+		"nepochs":len(lcs[0]),
 		"nseas":samplingstats["nseas"],
 		"meanseasgap":samplingstats["meansg"],
 		"stdseasgap":samplingstats["stdsg"],
@@ -67,9 +67,9 @@ for rung in [0, 1, 2, 3, 4]:
 		lcs = pycs.tdc.util.read(os.path.join(datadir, relfilepath), mag="asinh", verbose=True, shortlabel=False)
 
 		res = variostats(lcs)
-		res["rung"] = rung
-		res["pair"] = pair
 		
+		#res["rung"] = rung
+		#res["pair"] = pair
 		#print res
 		
 			
