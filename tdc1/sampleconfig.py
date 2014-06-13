@@ -4,7 +4,7 @@
 datadir = "/users/mtewes/fohlen/TDC/tdc1_v2_7Apr2014"
 
 # Directory in which should I store the xtrastats:
-xtrastatsdir = "/users/mtewes/fohlen/TDC/tdc1_v2_7Apr2014/xtrastats"
+xtrastatsdir = "results_tdc1/xtrastats"
 
 # Directory for PyCS "output" (whatever format we will choose...)
 pycsresdir = "results_tdc1"
