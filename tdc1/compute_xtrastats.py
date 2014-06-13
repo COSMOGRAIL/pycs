@@ -44,6 +44,7 @@ def variostats(lcs):
 		"variozonevalA":varioa["zoneval"],
 		"variozonevalB":variob["zoneval"],
 		"vratiomax":max(varioa["vratio"], variob["vratio"]),
+		"vratiomin":min(varioa["vratio"], variob["vratio"]),
 		"knotstep":knotstep
 		
 	}
