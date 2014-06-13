@@ -82,6 +82,9 @@ for rung in range(5):
 			
 			data = pycs.gen.util.readpickle(pklpath, verbose=False)
 			
+			# We can add some extra calculations that are not yet in the pkl files here (instead of redoign all the pkls...)
+			data["vratiomin"] = min(data["vratioA"], data["vratioB"])
+			
 			db[pairid].update(data) # We add this dict content to the existing dict.
 
 
