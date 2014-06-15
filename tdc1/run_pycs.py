@@ -3,12 +3,14 @@ import numpy as np
 import sys,time,os	
 import multiprocessing
 
-execfile('config_vivien.py')
+execfile('config.py')
 
 '''
-Here, we assume that iniests contain for every pair ONE estimate of the delay. We use that estimate to feed PyCS
-make it run on multi cpus in parallel...
+This script draw copy and sim curves, and run pycs on them
+The script run on multi cpus in parallel...(on all the available cpus !)
+The output directory can be changed in config.py
 '''
+
 
 ## Change the parameters of your run here (see README.txt for more details)
 
@@ -38,7 +40,7 @@ if method == 'sdi':
 	optfct = pycs.tdc.optfct.spldiff  
 
 
-# selection choice
+# selection of the estimates (according to confidence defined in make_confidence_id_pkls)
 
 if select == 'dou':
 	selection = pycs.gen.util.readpickle(os.path.join(groupedestimatespath,'1.pkl'))
@@ -86,12 +88,10 @@ if __name__ == '__main__':
 
 	# Import the estimates from d3cs, and select the ones we are interested in
 	
-	iniests = pycs.tdc.est.importfromd3cs(d3cslogpath) # where d3cslog is located
-				
+	iniests = pycs.tdc.est.importfromd3cs(d3cslogpath)			
 	allests = pycs.tdc.est.select(iniests,idlist=selection)	
-	allests = [est for est in allests if est.rung==rung]
-	allests = pycs.tdc.est.select(allests, rungs=[0], pairs=[26,225,316,524,703,28,35,46,22,123])										
-	combiests = pycs.tdc.est.multicombine(allests,method='d3cscombi1')
+	allests = [est for est in allests if est.rung==rung]										
+	combiests = pycs.tdc.est.multicombine(allests,method='d3cscombi1') # we combine the d3cs estimates into one single estimate per pair
 		
 	
 
@@ -110,9 +110,3 @@ if __name__ == '__main__':
 	print 'time taken=',(stop-start)/60.0,' [min]'
 	pycs.gen.util.writepickle(pool_out,drawdir+'.pkl')
 
-	
-	'''	
-	outests = pycs.gen.util.readpickle(drawdir+'.pkl')
-	plotpath = drawdir+'.png'
-	pycs.tdc.est.interactivebigplot(allests, shadedestimates=combiests+outests,interactive=False,plotpath=plotpath) # may crash if estlists are too long...
-	'''
