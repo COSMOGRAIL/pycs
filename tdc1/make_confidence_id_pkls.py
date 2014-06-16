@@ -4,6 +4,7 @@ import numpy as np
 
 """
 Writes lists of estimate ids into pkl files, corresponding to combi confidence levels.
+Only for pairs which are in TDC1 !
 Not sure if we need this...
 
 """
@@ -20,18 +21,21 @@ cats = ["none", 'dou','pla','dtm','mul','dtu','uni']
 
 ids = [[] for i in range(len(cats))] # We will store the ids in here.
 
+tdc1pairs = pycs.tdc.util.listtdc1v2pairs()
+
 for groupest in groupests:
 
 	code = pycs.tdc.combiconf.combiconf1(groupest)["code"]
 	pairid = groupest[0].id
 	
-	ids[code].append(pairid)
+	if groupest[0].pair in tdc1pairs:
+		ids[code].append(pairid)
 	
 
 for i in range(1, len(cats)):
 	
 	print "Code %i:" % (i)
-	print ids[i]
+	print len(ids[i])
 	
 	pycs.gen.util.writepickle(ids[i], os.path.join(outputdir,'%i.pkl' % (i)))
 
