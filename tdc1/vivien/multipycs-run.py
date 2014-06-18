@@ -14,9 +14,9 @@ make it run on multi cpus in parallel...
 
 method = 'spl' 	# spl, sdi
 select = 'dou'	# dou, pla, mul, dtm, dtu, uni 
-ncopy  = 2 	# c
-nsim   = 2   	# s
-maxshift = 4	# m
+ncopy  = 100 	# c
+nsim   = 1000  	# s
+maxshift = 8	# m
 rung   = 0	# r
 
 drawname = '%s-%s-c%s-s%s-m%s-r%s' %(method,select,ncopy,nsim,maxshift,rung)

@@ -6,7 +6,7 @@ import multiprocessing
 execfile('config_vivien.py')
 
 '''
-Check if we can open every copycurve and create a copy of it.
+Check if we can open every curve and create a copy/sim of it.
 '''
 
 ## Change the parameters of your run here (see README.txt for more details)
@@ -90,7 +90,7 @@ if __name__ == '__main__':
 	
 	iniests = pycs.tdc.est.importfromd3cs(d3cslogpath) # where d3cslog is located									
 	combiests = pycs.tdc.est.multicombine(iniests,method='d3cscombi1')
-	
+	badests = pycs.tdc.est.select(combiests,idlist=ids)
 	
 
 	start=time.time()
