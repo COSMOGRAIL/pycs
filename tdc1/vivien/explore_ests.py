@@ -25,7 +25,7 @@ pycs.gen.util.writepickle(combiests,'combiids.pkl')
 '''
 
 combiests = pycs.gen.util.readpickle('combiids.pkl')
-combiests = [est for est in combiests if est.confidence == 24]
+combiests = [est for est in combiests if est.confidence == 40]
 combiestids = [est.id for est in combiests]
 selectests = pycs.tdc.est.select(iniests,idlist = combiestids)
 
