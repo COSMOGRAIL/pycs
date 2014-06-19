@@ -7,6 +7,7 @@ execfile('config.py')
 Explore categories of estimates from combiconf2, in order to cast "GOD" judgements.
 """
 
+code_to_check = 40
 
 # load pairs from d3cs:
 
@@ -19,7 +20,10 @@ combiests_bg = pycs.gen.util.readpickle("./results_tdc1/combi_confidence_ids/com
 pycs.tdc.est.checkunique(combiests_bg)
 print "Read %i combiest_bg" % (len(combiests_bg))
 
-combiests_bg_select = [est for est in combiests_bg if est.confidence == 40]
+combiests_bg_select = [est for est in combiests_bg if est.confidence == code_to_check]
+
+print "Selected %i combiest_bg for code %i" % (len(combiests_bg_select), code_to_check)
+
 
 selectd3csests = pycs.tdc.est.select(d3csests, idlist = [est.id for est in combiests_bg_select])
 
