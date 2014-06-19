@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 Writes lists of estimate ids into pkl files, corresponding to combi confidence levels.
 Only for pairs which are in TDC1 !
 """
-execfile("config_vivien.py")
+execfile("sampleconfig.py")
 
 outputdir = './results_tdc1/combi_confidence_ids'		# Where .pkls will be stored
 
@@ -20,12 +20,12 @@ if 1:
 	iniests = pycs.tdc.est.select(iniests, pairs=tdc1pairs)
 
 	# group the estimates, and compute the combination with d3cscombi1 (do it only once
-	'''
+	
 	groupests = pycs.tdc.est.group(iniests)
 	combiests = pycs.tdc.est.multicombine(iniests,method='d3cscombi1')
-	pycs.gen.util.writepickle((groupests,combiests),'tempests.pkl')
-	'''
-	(groupests,combiests) = pycs.gen.util.readpickle('tempests.pkl')
+	pycs.gen.util.writepickle((groupests,combiests),os.path.join(outputdir,'tempests.pkl'))
+	
+	(groupests,combiests) = pycs.gen.util.readpickle(os.path.join(outputdir,'tempests.pkl'))
 
 	# compute the confidence level
 	# code that need a reroll: 22, 32 42, 52, 54
@@ -56,6 +56,10 @@ if 1:
 	plt.show()
 	
 	sys.exit()
+
+
+
+
 
 
 # go through the new d3cs database (after the hand of god),

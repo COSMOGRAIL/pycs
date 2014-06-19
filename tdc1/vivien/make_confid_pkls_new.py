@@ -20,11 +20,11 @@ if 1:
 	iniests = pycs.tdc.est.select(iniests, pairs=tdc1pairs)
 
 	# group the estimates, and compute the combination with d3cscombi1 (do it only once
-	'''
+	
 	groupests = pycs.tdc.est.group(iniests)
 	combiests = pycs.tdc.est.multicombine(iniests,method='d3cscombi1')
 	pycs.gen.util.writepickle((groupests,combiests),'tempests.pkl')
-	'''
+	
 	(groupests,combiests) = pycs.gen.util.readpickle('tempests.pkl')
 
 	# compute the confidence level
