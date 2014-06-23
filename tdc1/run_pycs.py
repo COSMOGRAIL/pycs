@@ -3,7 +3,7 @@ import numpy as np
 import sys,time,os	
 import multiprocessing
 
-execfile('config_vivien.py')
+execfile('vivien/config_vivien.py')
 
 '''
 This script draw copy and sim curves, and run pycs on them
@@ -61,7 +61,7 @@ def drawnrun(est):
 	"""
 	resultpklpath = os.path.join(drawdir,'%s.pkl' % est.id)
 	#print resultpklpath
-	errpath = os.path.join(drawdir,'err.txt')
+
 	
 	if not os.path.isfile(resultpklpath):	
 	
@@ -71,10 +71,9 @@ def drawnrun(est):
 			outest = pycs.tdc.run2.multirun(est, drawdir, optfct = optfct, ncopy=ncopy, nsim=nsim)		
 			pycs.gen.util.writepickle(outest,resultpklpath)
 			return outest
-		except:
-			print 'Cannot run on %s' %est.niceid
-			errfile = open(errpath,'a')
-			errfile.write('cannot run on %s \n' %est.niceid)
+		except:			
+			errfile = open(os.path.join(drawdir,'err_%s' %est.niceid),'w')
+			errfile.write('error is on the title !!')
 			errfile.close()
 
 	else:	
@@ -90,7 +89,8 @@ def start_process():
 #########   Here comes the actual selection of items and also keys that you want to use as PyCS input  #############
 
 db = pycs.gen.util.readpickle("joined.pkl").values()
-selection = [item for item in db if item["confidence"] == selectedconf]
+
+selection = [item for item in db if "confidence" in item and item["confidence"] == selectedconf]
 
 ests = []
 for item in selection:
