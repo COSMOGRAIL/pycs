@@ -15,6 +15,7 @@ import pycs
 import os
 import numpy as np
 import pyfits
+import glob
 
 
 ##############	Initialization ##############
@@ -37,7 +38,7 @@ for rung in range(5):
 		db[pairid]["in_tdc1"] = 1
 
 
-##############   D3CS + combiconf   ##############
+##############   D3CS + combiconf1, the old stuff   ##############
 
 
 d3csests = pycs.tdc.est.importfromd3cs(d3cslogpath)
@@ -48,27 +49,43 @@ for group in groupedd3csests:
 	db[group[0].id]["d3cs_stdtd"] = np.std(np.array([est.td for est in group])) # plain std dev of D3CS estimates
 
 	# We also get the combiconf
-	db[group[0].id]["combiconf1"] = pycs.tdc.combiconf.combiconf1(group)["code"]
+	db[group[0].id]["old_d3cs_combiconf1"] = pycs.tdc.combiconf.combiconf1(group)["code"]
 
 
 combid3csests = pycs.tdc.est.multicombine(d3csests, method='d3cscombi1')
 
 for est in combid3csests:
 		
+	db[est.id]["old_d3cs_combi_td"] = est.td
+	db[est.id]["old_d3cs_combi_tderr"] = est.tderr	
+	db[est.id]["old_d3cs_combi_abstd"] = abs(est.td)
+	if est.td != 0.0:
+		db[est.id]["old_d3cs_combi_reltderr"] = est.tderr / abs(est.td)
+	else:
+		db[est.id]["old_d3cs_combi_reltderr"] = 999.0
+
+
+##############   Final D3CS confidence + estimate (based on combiconf2 and GOD stuff)   ##############
+
+
+ag = pycs.gen.util.readpickle("results_tdc1/combi_confidence_ids/combiests_ag.pkl")
+
+for est in ag:
+	
 	db[est.id]["d3cs_combi_td"] = est.td
 	db[est.id]["d3cs_combi_tderr"] = est.tderr
 	db[est.id]["d3cs_combi_ms"] = est.ms
-	db[est.id]["d3cs_combi_timetaken"] = est.timetaken
-	db[est.id]["d3cs_combi_oldconfidence"] = est.confidence
+	db[est.id]["confidence"] = est.confidence
 	
-	db[est.id]["d3cs_combi_abstd"] = abs(est.td)
-	if est.td != 0.0:
-		db[est.id]["d3cs_combi_reltderr"] = est.tderr / abs(est.td)
+	if "GOD" in est.methodpar:
+		db[est.id]["god"] = 1
 	else:
-		db[est.id]["d3cs_combi_reltderr"] = 999.0
+		db[est.id]["god"] = 0
+	
+	db[est.id]["d3cs_combiconf2_code"] = est.code # The "long" one, like 42...
+	
 
 
-print "Done with D3CS..."
 ##############   xtrastats    ##############
 
 
@@ -119,6 +136,8 @@ def addpycs(db, estpklpath, methodname="none"):
 	Adds the PyCS estimates from estpklpath into the db, and computes some related useful quantities.
 	"""
 	estimates = pycs.gen.util.readpickle(estpklpath)
+	pycs.tdc.est.checkunique(estimates)
+	
 	for est in estimates:
 		db[est.id]["pycs_%s_td" % (methodname)] = est.td
 		db[est.id]["pycs_%s_tderr" % (methodname)] = est.tderr
@@ -146,8 +165,19 @@ def addpycs(db, estpklpath, methodname="none"):
 		else:
 			db[est.id]["pycs_%s_d3cs_tdsep_in_d3cs_errs" % (methodname)] = 999.0
 		
-			
 
+
+
+pycsresultspkls = sorted(glob.glob("results_tdc1/*.pkl"))
+
+for pkl in pycsresultspkls:
+	
+	methodname = os.path.splitext(os.path.basename(pkl))[0]
+	addpycs(db, pkl, methodname=methodname)
+
+
+
+"""
 splpkls = ["spl-dou-c20-s100-m8-uni-r0.pkl",
 "spl-dou-c20-s100-m8-uni-r1.pkl",
 "spl-dou-c20-s100-m8-uni-r2.pkl",
@@ -176,7 +206,7 @@ sdipkls = ["sdi-dou-c20-s100-m8-uni-r0.pkl",
 for pkl in sdipkls:
 	addpycs(db, os.path.join(pycsresdir, pkl), methodname="sdi")
 
-
+"""
 
 print "Done with PyCS..."
 ##############   pkl export    ##############
@@ -202,7 +232,7 @@ for e in db:
 allkeys = sorted(list(set(allkeys)))
 
 # we move a few items in first position
-putfirst = ["in_tdc1", "rung", "pair", "combiconf1"]
+putfirst = ["in_tdc1", "rung", "pair", "confidence"]
 for e in putfirst:
 	allkeys.remove(e)
 	allkeys.insert(0, e)
