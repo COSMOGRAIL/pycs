@@ -61,20 +61,26 @@ def drawnrun(est):
 	"""
 	resultpklpath = os.path.join(drawdir,'%s.pkl' % est.id)
 	#print resultpklpath
-
+	errpath = os.path.join(drawdir,'err.txt')
 	
 	if not os.path.isfile(resultpklpath):	
 	
-
-		pycs.tdc.run2.drawcopy(est, drawdir, n=ncopy, maxrandomshift = maxshift, addmlfct=pycs.tdc.splopt.splml1,datadir=datadir) 
-		pycs.tdc.run2.drawsim(est, drawdir, sploptfct=pycs.tdc.splopt.spl2, n=nsim, maxrandomshift = maxshift, addmlfct=pycs.tdc.splopt.splml1,datadir=datadir)	
-		outest = pycs.tdc.run2.multirun(est, drawdir, optfct = optfct, ncopy=ncopy, nsim=nsim)		
-		pycs.gen.util.writepickle(outest,resultpklpath)
-		return outest
+		try:
+			pycs.tdc.run2.drawcopy(est, drawdir, n=ncopy, maxrandomshift = maxshift, addmlfct=pycs.tdc.splopt.splml1,datadir=datadir) 
+			pycs.tdc.run2.drawsim(est, drawdir, sploptfct=pycs.tdc.splopt.spl2, n=nsim, maxrandomshift = maxshift, addmlfct=pycs.tdc.splopt.splml1,datadir=datadir)	
+			outest = pycs.tdc.run2.multirun(est, drawdir, optfct = optfct, ncopy=ncopy, nsim=nsim)		
+			pycs.gen.util.writepickle(outest,resultpklpath)
+			return outest
+		except:
+			print 'Cannot run on %s' %est.niceid
+			errfile = open(errpath,'a')
+			errfile.write('cannot run on %s \n' %est.niceid)
+			errfile.close()
 
 	else:	
 		print 'pycs estimate has already been computed for %s' %est.niceid 
-		return pycs.gen.util.readpickle(resultpklpath)			
+		return pycs.gen.util.readpickle(resultpklpath)	
+
 
 def start_process():
 
