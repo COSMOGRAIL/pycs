@@ -47,7 +47,7 @@ est4p_sdi = pycs.gen.util.readpickle('results/sdi-pla-c20-s100-m8-uni-r4.pkl')
 outests_sdi = est0_sdi+est1_sdi+est2_sdi+est3_sdi+est4_sdi+est0p_sdi+est1p_sdi+est2p_sdi+est3p_sdi+est4p_sdi
 
 
-
+multipycs-run.py~
 # Import original estimates, for comparison:
 
 iniests = pycs.tdc.est.importfromd3cs("../../web/d3cslog.txt") # where d3cslog is located 
