@@ -73,9 +73,15 @@ ag = pycs.gen.util.readpickle("results_tdc1/combi_confidence_ids/combiests_ag.pk
 for est in ag:
 	
 	db[est.id]["d3cs_combi_td"] = est.td
+	db[est.id]["d3cs_combi_abstd"] = abs(est.td)
 	db[est.id]["d3cs_combi_tderr"] = est.tderr
+	if est.td != 0.0:
+		db[est.id]["d3cs_combi_reltderr"] = est.tderr / abs(est.td)
+	else:
+		db[est.id]["d3cs_combi_reltderr"] = 999.0
+
 	db[est.id]["d3cs_combi_ms"] = est.ms
-	db[est.id]["confidence"] = est.confidence
+	db[est.id]["confidence"] = est.confidence # That is the final GOD adjusted confidence.
 	
 	if "GOD" in est.methodpar:
 		db[est.id]["god"] = 1
@@ -119,7 +125,7 @@ for (key, item) in db.items(): # Loop over the full database
 	# Kind of tricky, the real equation should make use of modulos or some explicit computation I guess.
 	# Here is a fast approx for short delays, "next-season-overlap" is not counted.
 	
-	item["d3cs_overlap_per_seas_days"] = np.clip(item["meanseaslen"] - np.fabs(item["d3cs_combi_td"]), 0.0, item["meanseaslen"])
+	item["d3cs_overlap_per_seas_days"] = np.clip(item["meanseaslen"] - abs(item["d3cs_combi_td"]), 0.0, item["meanseaslen"])
 	item["d3cs_overlap_days"] = item["nseas"]*item["d3cs_overlap_per_seas_days"]
 	item["d3cs_overlap_epochs"] = item["d3cs_overlap_days"]/item["meansampling"]
 
