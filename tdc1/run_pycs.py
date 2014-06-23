@@ -66,11 +66,11 @@ def drawnrun(est):
 	if not os.path.isfile(resultpklpath):	
 	
 
-		pycs.tdc.run2.drawcopy([est], drawdir, n=ncopy, maxrandomshift = maxshift, addmlfct=pycs.tdc.splopt.splml1,datadir=datadir) 
-		pycs.tdc.run2.drawsim([est], drawdir, sploptfct=pycs.tdc.splopt.spl2, n=nsim, maxrandomshift = maxshift, addmlfct=pycs.tdc.splopt.splml1,datadir=datadir)	
-		outests = pycs.tdc.run2.multirun([est], drawdir, optfct = optfct, ncopy=ncopy, nsim=nsim)		
-		pycs.gen.util.writepickle(outests[0],resultpklpath)
-		return outests[0]
+		pycs.tdc.run2.drawcopy(est, drawdir, n=ncopy, maxrandomshift = maxshift, addmlfct=pycs.tdc.splopt.splml1,datadir=datadir) 
+		pycs.tdc.run2.drawsim(est, drawdir, sploptfct=pycs.tdc.splopt.spl2, n=nsim, maxrandomshift = maxshift, addmlfct=pycs.tdc.splopt.splml1,datadir=datadir)	
+		outest = pycs.tdc.run2.multirun(est, drawdir, optfct = optfct, ncopy=ncopy, nsim=nsim)		
+		pycs.gen.util.writepickle(outest,resultpklpath)
+		return outest
 
 	else:	
 		print 'pycs estimate has already been computed for %s' %est.niceid 
@@ -98,7 +98,8 @@ if __name__ == '__main__':
 					initializer=start_process,
 					)
 
-	pycs.tdc.run2.createdir(combiests,drawdir)
+	for combiest in combiests:
+		pycs.tdc.run2.createdir(combiest,drawdir)
 	pool_out = pool.map(drawnrun,combiests)
 	pool.close()	
 	pool.join()	
