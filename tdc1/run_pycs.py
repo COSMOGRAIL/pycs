@@ -53,7 +53,7 @@ if select == 'uni': # in principle not needed...
 	
 	
 	
-def drawnrun(est,lock):
+def drawnrun(est):
 	"""
 	Check if a .pkl with the results of the optimization already exists
 	If not, draw copy and sim curves, and run the optimizer on them.
