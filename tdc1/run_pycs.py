@@ -81,30 +81,38 @@ def start_process():
 	print "Starting ",multiprocessing.current_process().name
 
 
-if __name__ == '__main__':
+#########   Here comes the actual selection of items and also keys that you want to use as PyCS input  #############
 
-	# Import the estimates from combiests_bg
-	
-										
-	combiests = pycs.gen.util.readpickle("../results_tdc1/combi_confidence_ids/combiests_ag.pkl") 
-	combiests = [est for est in combiests if est.confidence == selectedconf]
-	print len(combiests)
-	
+db = pycs.gen.util.readpickle("joined.pkl").values()
+selection = [item for item in db if item["confidence"] == selectedconf]
 
-	start=time.time()
-	pool_size = multiprocessing.cpu_count()
-	#pool_size = 8
-	pool = multiprocessing.Pool(processes = pool_size,
-					initializer=start_process,
-					)
+ests = []
+for item in selection:
+	newest = pycs.tdc.est.Estimate(set="tdc1", rung=item["rung"], pair=item["pair"])
+	newest.td = item["d3cs_combi_td"]
+	newest.tderr = item["d3cs_combi_tderr"]
+	ests.append(newest)
 
-	for combiest in combiests:
-		pycs.tdc.run2.createdir(combiest,drawdir)
-	pool_out = pool.map(drawnrun,combiests)
-	pool.close()	
-	pool.join()	
 
-	stop = time.time()
-	print 'time taken=',(stop-start)/60.0,' [min]'
-	pycs.gen.util.writepickle(pool_out,drawdir+'.pkl')
+print "I have selected %i estimates." % (len(ests))
+
+
+########## And we run, and save the results into a summary pickle ##############
+
+start=time.time()
+pool_size = multiprocessing.cpu_count()
+#pool_size = 8
+pool = multiprocessing.Pool(processes = pool_size,
+				initializer=start_process,
+				)
+
+for est in ests:
+	pycs.tdc.run2.createdir(est,drawdir)
+pool_out = pool.map(drawnrun,ests)
+pool.close()	
+pool.join()	
+
+stop = time.time()
+print 'time taken=',(stop-start)/60.0,' [min]'
+pycs.gen.util.writepickle(pool_out,drawdir+'.pkl')
 
