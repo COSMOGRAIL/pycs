@@ -1,13 +1,13 @@
 import pycs
 import matplotlib.pyplot as plt
 import sys,os
-execfile('config.py')
+execfile('sampleconfig.py')
 
 """
 Explore categories of estimates from combiconf2, in order to cast "GOD" judgements.
 """
 
-code_to_check = 40
+code_to_check = 24
 
 # load pairs from d3cs:
 

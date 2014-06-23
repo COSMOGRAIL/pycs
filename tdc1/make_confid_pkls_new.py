@@ -62,13 +62,16 @@ if 1:
 
 
 
+
+
+'''
 # go through the new d3cs database (after the hand of god),
 # and replace combiests_bg with god values if they exist
 
 combiests = pycs.gen.util.readpickle(os.path.join(outputdir,'combiests_bg.pkl'))
 godests = pycs.tdc.est.importfromd3cs(d3cslogpath_with_god)
 godests = [est for est in godests if est.methodpar=="god"]
-
+'''
 
 	
 	
