@@ -142,9 +142,11 @@ def addpycs(db, estpklpath, methodname="none"):
 	Adds the PyCS estimates from estpklpath into the db, and computes some related useful quantities.
 	"""
 	estimates = pycs.gen.util.readpickle(estpklpath)
+	estimates =  [e for e in estimates if e != None]
 	pycs.tdc.est.checkunique(estimates)
 	
 	for est in estimates:
+			
 		db[est.id]["pycs_%s_td" % (methodname)] = est.td
 		db[est.id]["pycs_%s_tderr" % (methodname)] = est.tderr
 		db[est.id]["pycs_%s_ms" % (methodname)] = est.ms
@@ -178,6 +180,7 @@ pycsresultspkls = sorted(glob.glob("results_tdc1/*.pkl"))
 
 for pkl in pycsresultspkls:
 	
+	#print "Reading in %s..." % (pkl)
 	methodname = os.path.splitext(os.path.basename(pkl))[0]
 	addpycs(db, pkl, methodname=methodname)
 
