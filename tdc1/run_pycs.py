@@ -3,7 +3,7 @@ import numpy as np
 import sys,time,os	
 import multiprocessing
 
-execfile('vivien/config_vivien.py')
+execfile('config.py')
 
 '''
 This script draw copy and sim curves, and run pycs on them
