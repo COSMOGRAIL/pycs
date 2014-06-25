@@ -173,7 +173,8 @@ def addpycs(db, estpklpath, methodname="none"):
 		else:
 			db[est.id]["pycs_%s_d3cs_tdsep_in_d3cs_errs" % (methodname)] = 999.0
 		
-
+		# Ratio between pycs error and d3cs error
+		db[est.id]["pycs_%s_to_d3cs_tderr_ratio" % (methodname)] = est.tderr / db[est.id]["d3cs_combi_tderr"]
 
 
 pycsresultspkls = sorted(glob.glob("results_tdc1/*.pkl"))
