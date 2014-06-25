@@ -17,26 +17,29 @@ The output directory can be changed in config.py
 #method = 'spl' 	# spl, sdi
 #select = 'mul'	# dou, pla, mul, uni
 
-ncopy  = 3 	# c
-nsim   = 3   	# s
+ncopy  = 20 	# c
+nsim   = 20   	# s
 maxshift = 8	# m
-pool_size = 5
+pool_size = 10
 
 #drawname = '%s-%s-c%s-s%s-m%s-r%s' %(method,select,ncopy,nsim,maxshift,rung)
 
-drawname = "spl3-dou-run1"
+drawname = "spl3-plau-run1"
 drawdir = os.path.join(pycsresdir,drawname)
-selectedconf = 1
+selectedconf = 2
 
 def optfct(lcs):
 	return pycs.tdc.splopt.spl3(lcs, knotstepfact=1.0, mlknotstep=365, maxit=7, minchange=1.0, verbose=False)
+
+
+sploptfct = optfct # this would be different if your optfct is e.g. sdi !
 
 
 def drawnrun(est):
 		
 	try:
 		pycs.tdc.run3.drawcopy(est, drawdir, n=ncopy, maxrandomshift = maxshift,datadir=datadir) 
-		pycs.tdc.run3.drawsim(est, drawdir, sploptfct=optfct, n=nsim, maxrandomshift = maxshift, datadir=datadir)	
+		pycs.tdc.run3.drawsim(est, drawdir, sploptfct=sploptfct, n=nsim, maxrandomshift = maxshift, datadir=datadir)	
 		pycs.tdc.run3.multirun(est, drawdir, optfct=optfct, ncopy=ncopy, nsim=nsim)		
 		
 	except Exception as e:			
@@ -57,7 +60,7 @@ db = pycs.gen.util.readpickle("joined.pkl").values()
 selection = [item for item in db if "confidence" in item and item["confidence"] == selectedconf]
 
 #selection = selection[:5]
-selection = selection[:3]
+selection = selection[:10]
 
 ests = []
 for item in selection:
@@ -94,6 +97,8 @@ stop = time.time()
 print 'time taken=',(stop-start)/60.0,' [min]'
 """
 
+
+# Plot some of the fits, on copies or simulations, to check if it seems OK.
 """
 est = ests[0]
 pycs.tdc.run3.viz(est, drawdir, datadir=datadir)
@@ -101,16 +106,16 @@ pycs.tdc.run3.viz(est, drawdir, datadir=datadir)
 
 
 
+# Compute the PyCS estimate for each pair, by summarizing the results on the copies and sims.
+# This also makes a check plot.
+
+"""
 for est in ests:
 	pycs.tdc.run3.summarize(est, drawdir, makefig=True)
 
-
-
-# Collect the results
-"""
-outests = collect(estimates, drawdir)
-pycs.gen.util.writepickle(outests,drawdir+'.pkl')
-
+# Collect the results into a single pickle.
+outests = pycs.tdc.run3.collect(ests, drawdir)
+pycs.gen.util.writepickle(outests, drawdir+'.pkl')
 """
 
 
