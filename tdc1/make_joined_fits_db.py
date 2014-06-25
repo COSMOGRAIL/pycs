@@ -9,7 +9,7 @@ into a single big pkl & FITS table
 
 """
 
-execfile("config.py")
+execfile("vivien/config_vivien.py")
 
 import pycs
 import os
@@ -125,10 +125,13 @@ for (key, item) in db.items(): # Loop over the full database
 	# Kind of tricky, the real equation should make use of modulos or some explicit computation I guess.
 	# Here is a fast approx for short delays, "next-season-overlap" is not counted.
 	
-	item["d3cs_overlap_per_seas_days"] = np.clip(item["meanseaslen"] - abs(item["d3cs_combi_td"]), 0.0, item["meanseaslen"])
-	item["d3cs_overlap_days"] = item["nseas"]*item["d3cs_overlap_per_seas_days"]
-	item["d3cs_overlap_epochs"] = item["d3cs_overlap_days"]/item["meansampling"]
-
+	try:
+		item["d3cs_overlap_per_seas_days"] = np.clip(item["meanseaslen"] - abs(item["d3cs_combi_td"]), 0.0, item["meanseaslen"])
+		item["d3cs_overlap_days"] = item["nseas"]*item["d3cs_overlap_per_seas_days"]
+		item["d3cs_overlap_epochs"] = item["d3cs_overlap_days"]/item["meansampling"]
+	except:	
+		print item
+		sys.exit()
 
 print "Done with overlap..."
 ##############   PyCS    ##############

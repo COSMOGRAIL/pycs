@@ -9,7 +9,9 @@ import os
 import numpy as np
 
 
-filename = "pycs_tdc1_test.dt"
+subname  = "pycs_tdc1_test"
+filepath = os.path.join(pycsresdir,'submissions',subname,subname+'.dt')
+dirpath = os.path.dirname(filepath)
 commentlist = ["D3CS combi", "confidence 1"]
 
 
@@ -66,10 +68,17 @@ for entry in sel:
 print "I could build %i estimates" % (len(estimates))	
 
 
-pycs.tdc.metrics.maxPplot([estimates], N=5120, filepath=filename+".maxPplot.png")
+if not os.path.isdir(dirpath):
+	print 'I create the new submission directory %s \n' %dirpath
+	os.mkdir(dirpath)
 
-pycs.tdc.util.writesubmission(estimates, filename, commentlist)
 
+
+pycs.tdc.metrics.maxPplot([estimates], N=5120, filepath = os.path.join(dirpath,"%s.maxPplot.png" %subname))
+
+pycs.tdc.util.writesubmission(estimates, filepath, commentlist)
+
+os.system('cp export_submission.py %s' %os.path.join(dirpath,'export_submission_%s.py' %subname))
 
 
 
