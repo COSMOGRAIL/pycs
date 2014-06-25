@@ -17,10 +17,10 @@ The output directory can be changed in config.py
 #method = 'spl' 	# spl, sdi
 #select = 'mul'	# dou, pla, mul, uni
 
-ncopy  = 20 	# c
-nsim   = 40   	# s
+ncopy  = 3 	# c
+nsim   = 3   	# s
 maxshift = 8	# m
-pool_size = 10
+pool_size = 5
 
 #drawname = '%s-%s-c%s-s%s-m%s-r%s' %(method,select,ncopy,nsim,maxshift,rung)
 
@@ -33,36 +33,21 @@ def optfct(lcs):
 
 
 def drawnrun(est):
-	"""
-	Check if a .pkl with the results of the optimization already exists
-	If not, draw copy and sim curves, and run the optimizer on them.
-	Then, save the results in a .pkl
-	"""
-	resultpklpath = os.path.join(drawdir,'%s.pkl' % est.id)
-	#print resultpklpath
-
+		
+	try:
+		pycs.tdc.run3.drawcopy(est, drawdir, n=ncopy, maxrandomshift = maxshift,datadir=datadir) 
+		pycs.tdc.run3.drawsim(est, drawdir, sploptfct=optfct, n=nsim, maxrandomshift = maxshift, datadir=datadir)	
+		pycs.tdc.run3.multirun(est, drawdir, optfct=optfct, ncopy=ncopy, nsim=nsim)		
+		
+	except Exception as e:			
+		print "Error !", e
+		errfile = open(os.path.join(drawdir,'err_%s' %est.niceid),'w')
+		errfile.write(str(e))
+		errfile.close()
 	
-	if not os.path.isfile(resultpklpath):	
-	
-		try:
-			pycs.tdc.run3.drawcopy(est, drawdir, n=ncopy, maxrandomshift = maxshift,datadir=datadir) 
-			pycs.tdc.run3.drawsim(est, drawdir, sploptfct=optfct, n=nsim, maxrandomshift = maxshift, datadir=datadir)	
-			outest = pycs.tdc.run3.multirun(est, drawdir, optfct=optfct, ncopy=ncopy, nsim=nsim)		
-			pycs.gen.util.writepickle(outest,resultpklpath)
-			return outest
-		except Exception as e:			
-			errfile = open(os.path.join(drawdir,'err_%s' %est.niceid),'w')
-			errfile.write(str(e))
-			errfile.close()
-
-	else:	
-		print 'pycs estimate has already been computed for %s' %est.niceid 
-		return pycs.gen.util.readpickle(resultpklpath)	
-
-
 def start_process():
-
 	print "Starting ",multiprocessing.current_process().name
+
 
 
 #########   Here comes the actual selection of items and also keys that you want to use as PyCS input  #############
@@ -72,6 +57,7 @@ db = pycs.gen.util.readpickle("joined.pkl").values()
 selection = [item for item in db if "confidence" in item and item["confidence"] == selectedconf]
 
 #selection = selection[:5]
+selection = selection[:3]
 
 ests = []
 for item in selection:
@@ -83,34 +69,49 @@ for item in selection:
 
 print "I have selected %i estimates." % (len(ests))
 
+for est in ests:
+	pycs.tdc.run3.createdir(est,drawdir)
 
 ########## And we run, and save the results into a summary pickle ##############
 
-"""
-pool_out = []
 
+# Run without  multiprocessing
+"""
 for est in ests:
-	pycs.tdc.run3.createdir(est,drawdir)
-	out = drawnrun(est)
-	pool_out.append(out)
-
-pycs.gen.util.writepickle(pool_out,drawdir+'.pkl')
+	drawnrun(est)
 """
 
-
+# Run with multiprocessing
+"""
 start=time.time()
 #pool_size = multiprocessing.cpu_count()
-pool = multiprocessing.Pool(processes = pool_size,
-				initializer=start_process,
-				)
-
-for est in ests:
-	pycs.tdc.run3.createdir(est,drawdir)
+pool = multiprocessing.Pool(processes = pool_size, initializer=start_process)
 pool_out = pool.map(drawnrun,ests)
 pool.close()	
 pool.join()	
 
 stop = time.time()
 print 'time taken=',(stop-start)/60.0,' [min]'
-pycs.gen.util.writepickle(pool_out,drawdir+'.pkl')
+"""
+
+"""
+est = ests[0]
+pycs.tdc.run3.viz(est, drawdir, datadir=datadir)
+"""
+
+
+
+for est in ests:
+	pycs.tdc.run3.summarize(est, drawdir, makefig=True)
+
+
+
+# Collect the results
+"""
+outests = collect(estimates, drawdir)
+pycs.gen.util.writepickle(outests,drawdir+'.pkl')
+
+"""
+
+
 
