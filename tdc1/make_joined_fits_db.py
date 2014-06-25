@@ -150,12 +150,22 @@ def addpycs(db, estpklpath, methodname="none"):
 	
 	for est in estimates:
 			
+		# Normal fields
 		db[est.id]["pycs_%s_td" % (methodname)] = est.td
 		db[est.id]["pycs_%s_tderr" % (methodname)] = est.tderr
 		db[est.id]["pycs_%s_ms" % (methodname)] = est.ms
 		db[est.id]["pycs_%s_timetaken" % (methodname)] = est.timetaken
 		db[est.id]["pycs_%s_confidence" % (methodname)] = est.confidence
 	
+		# Pirat fields, if available
+		if hasattr(est, "tdvarint"):
+			db[est.id]["pycs_%s_tdvarint" % (methodname)] = est.tdvarint
+		if hasattr(est, "tdranerr"):
+			db[est.id]["pycs_%s_tdranerr" % (methodname)] = est.tdranerr
+		if hasattr(est, "tdsyserr"):
+			db[est.id]["pycs_%s_tdsyserr" % (methodname)] = est.tdsyserr
+	
+		
 		# The absolute delay, and the relative error:	
 		db[est.id]["pycs_%s_abstd" % (methodname)] = abs(est.td)
 		if est.td != 0.0:
