@@ -29,6 +29,11 @@ for rung in range(5):
 		pairid = "%s_%i_%i" % ("tdc1", rung, pair)
 		db[pairid] = {"rung":rung, "pair":pair, "in_tdc1":0} # By default, a pair is not in tdc1.
 		
+		db[pairid]["is_quad"] = 0
+		if pair > 720:
+			db[pairid]["is_quad"] = 1
+			
+		
 
 ##############   Some pairs where rejected, we mark this with a flag  ##############
 
@@ -193,18 +198,35 @@ def addpycs(db, estimates, methodname="none"):
 
 # We explicitly include the key runs
 
-sdi1 = pycs.gen.util.readpickle("results_tdc1/sdi-dou-c20-s100-m8-rall.pkl")\
+ests = pycs.gen.util.readpickle("results_tdc1/sdi-dou-c20-s100-m8-rall.pkl")\
 		+ pycs.gen.util.readpickle("results_tdc1/sdi-pla-c20-s100-m8-rall.pkl")\
 		+ pycs.gen.util.readpickle("results_tdc1/sdi-mul-c20-s100-m8-rall.pkl")
-addpycs(db, sdi1, methodname="sdi1")
+addpycs(db, ests, methodname="sdi1")
 
+ests = pycs.gen.util.readpickle("results_tdc1/spl-dou-c20-s100-m8-rall.pkl") + pycs.gen.util.readpickle("results_tdc1/spl-pla-c20-s100-m8-rall.pkl")
+addpycs(db, ests, methodname="spl2")
 
-spl2 = pycs.gen.util.readpickle("results_tdc1/spl-dou-c20-s100-m8-rall.pkl") + pycs.gen.util.readpickle("results_tdc1/spl-pla-c20-s100-m8-rall.pkl")
-addpycs(db, spl2, methodname="spl2")
+ests = pycs.gen.util.readpickle("results_tdc1/spl3-dou-run1-Bonn.pkl") + pycs.gen.util.readpickle("results_tdc1/spl3-pla-run1-Bonn.pkl")
+addpycs(db, ests, methodname="spl3_Bonn")
 
+ests = pycs.gen.util.readpickle("results_tdc1/spl3-pla-k1-ml365.pkl") # We do not have dou for this one !
+addpycs(db, ests, methodname="spl3_EPFL")
 
-spl3_Bonn = pycs.gen.util.readpickle("results_tdc1/spl3-dou-run1-Bonn.pkl") + pycs.gen.util.readpickle("results_tdc1/spl3-pla-run1-Bonn.pkl")
-addpycs(db, spl3_Bonn, methodname="spl3_Bonn")
+ests = pycs.gen.util.readpickle("results_tdc1/spl3-dou-k0.75-ml365.pkl") + pycs.gen.util.readpickle("results_tdc1/spl3-pla-k0.75-ml365.pkl")
+addpycs(db, ests, methodname="spl3_EPFL_k0.75")
+
+ests = pycs.gen.util.readpickle("results_tdc1/spl3-dou-k1.5-ml365.pkl") + pycs.gen.util.readpickle("results_tdc1/spl3-pla-k1.5-ml365.pkl")
+addpycs(db, ests, methodname="spl3_EPFL_k1.5")
+
+ests = pycs.gen.util.readpickle("results_tdc1/spl3-dou-k1-ml183.pkl") + pycs.gen.util.readpickle("results_tdc1/spl3-pla-k1-ml183.pkl")
+addpycs(db, ests, methodname="spl3_EPFL_ml183")
+
+ests = pycs.gen.util.readpickle("results_tdc1/spl3-dou-k1.5-ml183.pkl") + pycs.gen.util.readpickle("results_tdc1/spl3-pla-k1.5-ml183.pkl")
+addpycs(db, ests, methodname="spl3_EPFL_k1.5_ml183")
+
+ests = pycs.gen.util.readpickle("results_tdc1/spl3-dou-k0.75-ml183.pkl") + pycs.gen.util.readpickle("results_tdc1/spl3-pla-k0.75-ml183.pkl")
+addpycs(db, ests, methodname="spl3_EPFL_k0.75_ml183")
+
 
 
 # Add your own...
