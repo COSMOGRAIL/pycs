@@ -9,7 +9,7 @@ into a single big pkl & FITS table
 
 """
 
-execfile("vivien/config_vivien.py")
+execfile("config.py")
 
 import pycs
 import os
@@ -140,15 +140,15 @@ print "Done with overlap..."
 # This part is kind of custom and preliminary for now...
 
 
-def addpycs(db, estpklpath, methodname="none"):
+def addpycs(db, estimates, methodname="none"):
 	"""
-	Adds the PyCS estimates from estpklpath into the db, and computes some related useful quantities.
+	Adds the PyCS estimates into the db, and computes some related useful quantities.
 	"""
-	estimates = pycs.gen.util.readpickle(estpklpath)
-	estimates =  [e for e in estimates if e != None]
-	pycs.tdc.est.checkunique(estimates)
 	
-	for est in estimates:
+	cleanestimates =  [e for e in estimates if e != None]
+	pycs.tdc.est.checkunique(cleanestimates)
+	
+	for est in cleanestimates:
 			
 		# Normal fields
 		db[est.id]["pycs_%s_td" % (methodname)] = est.td
@@ -190,46 +190,38 @@ def addpycs(db, estpklpath, methodname="none"):
 		db[est.id]["pycs_%s_to_d3cs_tderr_ratio" % (methodname)] = est.tderr / db[est.id]["d3cs_combi_tderr"]
 
 
-pycsresultspkls = sorted(glob.glob("results_tdc1/*.pkl"))
+
+# We explicitly include the key runs
+
+sdi1 = pycs.gen.util.readpickle("results_tdc1/sdi-dou-c20-s100-m8-rall.pkl")\
+		+ pycs.gen.util.readpickle("results_tdc1/sdi-pla-c20-s100-m8-rall.pkl")\
+		+ pycs.gen.util.readpickle("results_tdc1/sdi-mul-c20-s100-m8-rall.pkl")
+addpycs(db, sdi1, methodname="sdi1")
+
+
+spl2 = pycs.gen.util.readpickle("results_tdc1/spl-dou-c20-s100-m8-rall.pkl") + pycs.gen.util.readpickle("results_tdc1/spl-pla-c20-s100-m8-rall.pkl")
+addpycs(db, spl2, methodname="spl2")
+
+
+spl3_Bonn = pycs.gen.util.readpickle("results_tdc1/spl3-dou-run1-Bonn.pkl") + pycs.gen.util.readpickle("results_tdc1/spl3-pla-run1-Bonn.pkl")
+addpycs(db, spl3_Bonn, methodname="spl3_Bonn")
+
+
+# Add your own...
+
+
+# And we also include those in auto_include_in_db, for quick tests...
+
+pycsresultspkls = sorted(glob.glob("results_tdc1/auto_include_in_db/*.pkl"))
 
 for pkl in pycsresultspkls:
-	
-	#print "Reading in %s..." % (pkl)
+	print "Autoincluding", pkl
+	estimates = pycs.gen.util.readpickle(pkl) 
 	methodname = os.path.splitext(os.path.basename(pkl))[0]
-	addpycs(db, pkl, methodname=methodname)
+	addpycs(db, estimates, methodname=methodname)
 
 
 
-"""
-splpkls = ["spl-dou-c20-s100-m8-uni-r0.pkl",
-"spl-dou-c20-s100-m8-uni-r1.pkl",
-"spl-dou-c20-s100-m8-uni-r2.pkl",
-"spl-dou-c20-s100-m8-uni-r3.pkl",
-"spl-dou-c20-s100-m8-uni-r4.pkl",
-"spl-pla-c20-s100-m8-uni-r0.pkl",
-"spl-pla-c20-s100-m8-uni-r1.pkl",
-"spl-pla-c20-s100-m8-uni-r2.pkl",
-"spl-pla-c20-s100-m8-uni-r3.pkl",
-"spl-pla-c20-s100-m8-uni-r4.pkl"]
-
-for pkl in splpkls:
-	addpycs(db, os.path.join(pycsresdir, pkl), methodname="spl")
-
-sdipkls = ["sdi-dou-c20-s100-m8-uni-r0.pkl",
-"sdi-dou-c20-s100-m8-uni-r1.pkl",
-"sdi-dou-c20-s100-m8-uni-r2.pkl",
-"sdi-dou-c20-s100-m8-uni-r3.pkl",
-"sdi-dou-c20-s100-m8-uni-r4.pkl",
-"sdi-pla-c20-s100-m8-uni-r0.pkl",
-"sdi-pla-c20-s100-m8-uni-r1.pkl",
-"sdi-pla-c20-s100-m8-uni-r2.pkl",
-"sdi-pla-c20-s100-m8-uni-r3.pkl",
-"sdi-pla-c20-s100-m8-uni-r4.pkl"]
-
-for pkl in sdipkls:
-	addpycs(db, os.path.join(pycsresdir, pkl), methodname="sdi")
-
-"""
 
 print "Done with PyCS..."
 ##############   pkl export    ##############
