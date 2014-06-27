@@ -1,12 +1,12 @@
 # TDC submission written by PyCS
-# 2014-06-27 16:24:56.270195
+# 2014-06-27 17:39:16.016764
 # 
 # Malte Tewes <mtewes@astro.uni-bonn.de>, Uni Bonn
 # Vivien Bonvin <vivien.bonvin@epfl.ch>, EPFL
 # Frederic Courbin <frederic.courbin@epfl.ch>, EPFL
 # 
 # Orignial filename: pycs_tdc1_d3cs-vanilla-doupla-full.dt
-# 3465 estimates have been selected
+# 3457 estimates have been selected
 # Comments:
 #   D3CS combi
 #   vanilla parameters
@@ -1329,9 +1329,9 @@ tdc1_rung1_double_pair288.txt	  -99.00	  -99.00
 tdc1_rung1_double_pair289.txt	  -15.05	    5.35
 tdc1_rung1_double_pair290.txt	  -99.00	  -99.00
 tdc1_rung1_double_pair291.txt	  -44.40	    7.95
-tdc1_rung1_double_pair292.txt	   -8.05	   32.10
+tdc1_rung1_double_pair292.txt	  -99.00	  -99.00
 tdc1_rung1_double_pair293.txt	   46.35	    7.80
-tdc1_rung1_double_pair294.txt	    6.90	  420.30
+tdc1_rung1_double_pair294.txt	  -99.00	  -99.00
 tdc1_rung1_double_pair295.txt	  -65.60	    5.10
 tdc1_rung1_double_pair296.txt	  -99.00	  -99.00
 tdc1_rung1_double_pair297.txt	  -34.10	    5.55
@@ -1436,7 +1436,7 @@ tdc1_rung1_double_pair395.txt	  -17.15	   11.20
 tdc1_rung1_double_pair396.txt	  -54.20	    7.55
 tdc1_rung1_double_pair397.txt	  -99.00	  -99.00
 tdc1_rung1_double_pair398.txt	    4.35	    3.05
-tdc1_rung1_double_pair399.txt	   88.85	  197.30
+tdc1_rung1_double_pair399.txt	  -99.00	  -99.00
 tdc1_rung1_double_pair400.txt	  -60.10	    8.40
 tdc1_rung1_double_pair401.txt	  -58.80	    8.90
 tdc1_rung1_double_pair402.txt	  -67.25	   10.50
@@ -2482,7 +2482,7 @@ tdc1_rung2_double_pair417.txt	  -99.00	  -99.00
 tdc1_rung2_double_pair418.txt	  -99.00	  -99.00
 tdc1_rung2_double_pair419.txt	  -29.05	    5.55
 tdc1_rung2_double_pair420.txt	  -99.00	  -99.00
-tdc1_rung2_double_pair421.txt	  -85.50	   47.65
+tdc1_rung2_double_pair421.txt	  -99.00	  -99.00
 tdc1_rung2_double_pair422.txt	  -27.20	   10.80
 tdc1_rung2_double_pair423.txt	  -99.00	  -99.00
 tdc1_rung2_double_pair424.txt	  -16.70	    5.60
@@ -3575,7 +3575,7 @@ tdc1_rung3_double_pair486.txt	  -57.80	    4.90
 tdc1_rung3_double_pair487.txt	  -27.30	    6.05
 tdc1_rung3_double_pair488.txt	  -99.00	  -99.00
 tdc1_rung3_double_pair489.txt	  -99.00	  -99.00
-tdc1_rung3_double_pair490.txt	   21.70	  111.30
+tdc1_rung3_double_pair490.txt	  -99.00	  -99.00
 tdc1_rung3_double_pair491.txt	  -99.00	  -99.00
 tdc1_rung3_double_pair492.txt	  -99.00	  -99.00
 tdc1_rung3_double_pair493.txt	  -99.00	  -99.00
@@ -4355,7 +4355,7 @@ tdc1_rung4_double_pair242.txt	  -22.20	   11.50
 tdc1_rung4_double_pair243.txt	   50.20	   11.00
 tdc1_rung4_double_pair244.txt	  -99.00	  -99.00
 tdc1_rung4_double_pair245.txt	   28.40	   16.30
-tdc1_rung4_double_pair246.txt	   47.55	   30.05
+tdc1_rung4_double_pair246.txt	  -99.00	  -99.00
 tdc1_rung4_double_pair247.txt	   24.85	   18.65
 tdc1_rung4_double_pair248.txt	  -99.00	  -99.00
 tdc1_rung4_double_pair249.txt	  -16.05	   11.60
@@ -4458,7 +4458,7 @@ tdc1_rung4_double_pair345.txt	   23.10	   11.05
 tdc1_rung4_double_pair346.txt	  -99.00	  -99.00
 tdc1_rung4_double_pair347.txt	  -17.10	   11.30
 tdc1_rung4_double_pair348.txt	  -99.00	  -99.00
-tdc1_rung4_double_pair349.txt	  -57.10	   45.95
+tdc1_rung4_double_pair349.txt	  -99.00	  -99.00
 tdc1_rung4_double_pair350.txt	   74.20	    8.85
 tdc1_rung4_double_pair351.txt	  -70.10	   10.00
 tdc1_rung4_double_pair352.txt	  -35.15	    9.30
@@ -4675,7 +4675,7 @@ tdc1_rung4_double_pair562.txt	   33.80	   15.15
 tdc1_rung4_double_pair563.txt	  -99.00	  -99.00
 tdc1_rung4_double_pair564.txt	   18.15	   10.55
 tdc1_rung4_double_pair565.txt	  -42.00	   12.10
-tdc1_rung4_double_pair566.txt	   57.75	   41.25
+tdc1_rung4_double_pair566.txt	  -99.00	  -99.00
 tdc1_rung4_double_pair567.txt	   47.45	   10.75
 tdc1_rung4_double_pair568.txt	   15.85	   20.65
 tdc1_rung4_double_pair569.txt	   -4.10	   11.30

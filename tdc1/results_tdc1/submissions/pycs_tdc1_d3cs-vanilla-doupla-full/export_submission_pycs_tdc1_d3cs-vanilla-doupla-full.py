@@ -9,7 +9,7 @@ import os
 import numpy as np
 
 
-subname  = "pycs_tdc1_d3cs-vanilla-doupla-full"
+subname  = subname
 filepath = os.path.join("results_tdc1",'submissions',subname,subname+'.dt')
 dirpath = os.path.dirname(filepath)
 commentlist = ["D3CS combi", "vanilla parameters", "doubtless and plausible estimates", "full range"]
@@ -30,8 +30,16 @@ for entry in dbintdc1:
 	isin = False
 	# Add your own criteria here...
 	
+	# doubtless, plausible...
 	if entry["confidence"] in [1,2]:	
 		isin = True
+	
+	# D3CS only, reject tderr >30 for plausibles and multimodal
+	if entry["confidence"] in [2,3] and entry["d3cs_combi_tderr"] > 30:
+		isin = False
+		
+
+	
 	
 	# And we build our selection:
 	if isin:
@@ -73,12 +81,16 @@ if not os.path.isdir(dirpath):
 	print 'I create the new submission directory %s \n' %dirpath
 	os.mkdir(dirpath)
 
-
-pycs.tdc.metrics.maxPplot([estimates], N=5120, filepath = os.path.join(dirpath,"%s.maxPplot.png" %subname))
-
-
 cleanestimates = pycs.tdc.util.godtweak(estimates)
-pycs.tdc.util.writesubmission(cleanestimates, filepath, commentlist)
+
+# Here, we select only the best n curves for the P metric
+
+sortedPestimates = pycs.tdc.metrics.sortbyP(cleanestimates)
+n=1600
+selectPestimates = sortedPestimates # we keep all 
+
+pycs.tdc.metrics.maxPplot([selectPestimates], N=5120, filepath = os.path.join(dirpath,"%s.maxPplot.png" %subname))
+pycs.tdc.util.writesubmission(selectPestimates, filepath, commentlist)
 
 os.system('cp export_submission.py %s' %os.path.join(dirpath,'export_submission_%s.py' %subname))
 
