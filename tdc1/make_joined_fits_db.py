@@ -227,9 +227,12 @@ addpycs(db, ests, methodname="spl3_EPFL_k1.5_ml183")
 ests = pycs.gen.util.readpickle("results_tdc1/spl3-dou-k0.75-ml183.pkl") + pycs.gen.util.readpickle("results_tdc1/spl3-pla-k0.75-ml183.pkl")
 addpycs(db, ests, methodname="spl3_EPFL_k0.75_ml183")
 
+ests = pycs.gen.util.readpickle("results_tdc1/spl3-dou-k1-ml365-ms12.pkl") + pycs.gen.util.readpickle("results_tdc1/spl3-pla-k1-ml365-ms12.pkl")
+addpycs(db, ests, methodname="spl3_EPFL_ms12")
 
+#ests = pycs.gen.util.readpickle("results_tdc1/spl3-dou-k1-ml365-ms8-tri.pkl")
+#addpycs(db, ests, methodname="spl3_EPFL_tri")
 
-# Add your own...
 
 
 # And we also include those in auto_include_in_db, for quick tests...
