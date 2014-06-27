@@ -10,7 +10,7 @@ import numpy as np
 
 
 subname  = "pycs_tdc1_test"
-filepath = os.path.join(pycsresdir,'submissions',subname,subname+'.dt')
+filepath = os.path.join("results_tdc1",'submissions',subname,subname+'.dt')
 dirpath = os.path.dirname(filepath)
 commentlist = ["D3CS combi", "confidence 1"]
 
@@ -76,7 +76,9 @@ if not os.path.isdir(dirpath):
 
 pycs.tdc.metrics.maxPplot([estimates], N=5120, filepath = os.path.join(dirpath,"%s.maxPplot.png" %subname))
 
-pycs.tdc.util.writesubmission(estimates, filepath, commentlist)
+
+cleanestimates = pycs.tdc.util.godtweak(estimates)
+pycs.tdc.util.writesubmission(cleanestimates, filepath, commentlist)
 
 os.system('cp export_submission.py %s' %os.path.join(dirpath,'export_submission_%s.py' %subname))
 
