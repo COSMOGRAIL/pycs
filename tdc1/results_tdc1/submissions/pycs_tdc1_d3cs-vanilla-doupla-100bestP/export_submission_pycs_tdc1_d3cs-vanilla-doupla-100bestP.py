@@ -85,11 +85,20 @@ if not os.path.isdir(dirpath):
 
 cleanestimates = pycs.tdc.util.godtweak(estimates)
 
-# Here, we select only the best n curves for the P metric
+for cleanest in cleanestimates: # because of sorted !
+	if cleanest.td == 0.0:
+		print " I tweak %s td value to 0.001" %cleanest.id
+		cleanest.td = 0.001
+
+# Here, we select only the best n curves for the P metricyes
 
 sortedPestimates = pycs.tdc.metrics.sortbyP(cleanestimates)
 n=100
-selectPestimates = sortedPestimates[-n:]
+
+selectPestimates = sortedPestimates # do nothing
+selectPestimates = sortedPestimates[-n:] # select
+
+
 
 pycs.tdc.metrics.maxPplot([selectPestimates], N=5120, filepath = os.path.join(dirpath,"%s.maxPplot.png" %subname))
 pycs.tdc.util.writesubmission(selectPestimates, filepath, commentlist)

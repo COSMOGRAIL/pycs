@@ -82,7 +82,7 @@ subids = [info[0] for info in subinfos]
 
 sub_td = [info[1] for info in subinfos]
 sub_tderr = [info[2] for info in subinfos]
-sub_reltderr = [info[2]/abs(info[1]) for info in subinfos]
+sub_reltderr = [info[2]/abs(info[1]+0.001) for info in subinfos]
 d3cs_td = [db[subid]["d3cs_combi_td"] for subid in subids]
 d3cs_tderr = [db[subid]["d3cs_combi_tderr"] for subid in subids]
 d3cs_reltderr = [db[subid]["d3cs_combi_reltderr"] for subid in subids]

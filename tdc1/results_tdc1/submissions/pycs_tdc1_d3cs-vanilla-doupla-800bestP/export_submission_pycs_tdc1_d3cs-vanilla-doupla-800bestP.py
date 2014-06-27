@@ -14,6 +14,7 @@ filepath = os.path.join("results_tdc1",'submissions',subname,subname+'.dt')
 dirpath = os.path.dirname(filepath)
 commentlist = ["D3CS combi", "vanilla parameters", "doubtless and plausible estimates", "full range"]
 
+print ''
 print 'You are going to run on %s' % subname
 pycs.tdc.util.goingon()
 
@@ -84,11 +85,20 @@ if not os.path.isdir(dirpath):
 
 cleanestimates = pycs.tdc.util.godtweak(estimates)
 
-# Here, we select only the best n curves for the P metric
+for cleanest in cleanestimates: # because of sorted !
+	if cleanest.td == 0.0:
+		print " I tweak %s td value to 0.001" %cleanest.id
+		cleanest.td = 0.001
+
+# Here, we select only the best n curves for the P metricyes
 
 sortedPestimates = pycs.tdc.metrics.sortbyP(cleanestimates)
 n=800
-selectPestimates = sortedPestimates[-n:]
+
+selectPestimates = sortedPestimates # do nothing
+selectPestimates = sortedPestimates[-n:] # select
+
+
 
 pycs.tdc.metrics.maxPplot([selectPestimates], N=5120, filepath = os.path.join(dirpath,"%s.maxPplot.png" %subname))
 pycs.tdc.util.writesubmission(selectPestimates, filepath, commentlist)
