@@ -16,5 +16,6 @@ d3cslogpath = "d3cs_logs/2014-06-07.txt"
 groupedestimatespath = 'results_tdc1/combi_confidence_ids'
 
 
-
+# For export and check submissions, not to mix paths...
+subname = 'pycs_tdc1_d3cs-vanilla-doupla-1600bestP'
 
