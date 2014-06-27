@@ -1,5 +1,5 @@
 # TDC submission written by PyCS
-# 2014-06-27 17:39:16.016764
+# 2014-06-27 18:18:51.936649
 # 
 # Malte Tewes <mtewes@astro.uni-bonn.de>, Uni Bonn
 # Vivien Bonvin <vivien.bonvin@epfl.ch>, EPFL
@@ -61,7 +61,7 @@ tdc1_rung0_double_pair44.txt	  -61.35	    8.00
 tdc1_rung0_double_pair45.txt	   10.75	    6.75
 tdc1_rung0_double_pair46.txt	   40.70	    7.55
 tdc1_rung0_double_pair47.txt	   47.75	    8.15
-tdc1_rung0_double_pair48.txt	   -0.10	   10.45
+tdc1_rung0_double_pair48.txt	   -0.00	   10.45
 tdc1_rung0_double_pair49.txt	  -99.00	  -99.00
 tdc1_rung0_double_pair50.txt	  -99.00	  -99.00
 tdc1_rung0_double_pair51.txt	    8.30	    7.50
@@ -3024,7 +3024,7 @@ tdc1_rung2_quad_pair124A.txt	   26.90	    9.40
 tdc1_rung2_quad_pair124B.txt	   10.10	    6.80
 tdc1_rung2_quad_pair125A.txt	  -99.00	  -99.00
 tdc1_rung2_quad_pair125B.txt	  -99.00	  -99.00
-tdc1_rung2_quad_pair127A.txt	   -0.10	    9.40
+tdc1_rung2_quad_pair127A.txt	   -0.00	    9.40
 tdc1_rung2_quad_pair127B.txt	  -99.00	  -99.00
 tdc1_rung2_quad_pair128A.txt	   10.40	    5.30
 tdc1_rung2_quad_pair128B.txt	  -99.00	  -99.00

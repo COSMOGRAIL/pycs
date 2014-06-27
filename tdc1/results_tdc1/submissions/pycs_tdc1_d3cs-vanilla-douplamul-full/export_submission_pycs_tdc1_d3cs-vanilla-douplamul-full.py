@@ -33,7 +33,7 @@ for entry in dbintdc1:
 	# Add your own criteria here...
 	
 	# doubtless, plausible...
-	if entry["confidence"] in [1,2]:	
+	if entry["confidence"] in [1,2,3]:	
 		isin = True
 	
 	# D3CS only, reject tderr >30 for plausibles and multimodal
@@ -87,16 +87,15 @@ cleanestimates = pycs.tdc.util.godtweak(estimates)
 
 for cleanest in cleanestimates: # because of sorted !
 	if cleanest.td == 0.0:
-		print " I tweak %s td value to 0.001" %cleanest.id
 		cleanest.td = 0.001
 
 # Here, we select only the best n curves for the P metric
 
 sortedPestimates = pycs.tdc.metrics.sortbyP(cleanestimates)
-n=1600
+n=100
 
 selectPestimates = sortedPestimates # do nothing
-selectPestimates = sortedPestimates[-n:] # select
+#selectPestimates = sortedPestimates[-n:] # select
 
 
 
