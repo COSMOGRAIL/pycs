@@ -18,18 +18,18 @@ The output directory can be changed in config.py
 #select = 'mul'	# dou, pla, mul, uni
 
 ncopy  = 20 	# c
-nsim   = 20   	# s
+nsim   = 40   	# s
 maxshift = 8	# m
-pool_size = 10
+pool_size = 12
 
 #drawname = '%s-%s-c%s-s%s-m%s-r%s' %(method,select,ncopy,nsim,maxshift,rung)
 
-drawname = "spl3-plau-run1"
+drawname = "spl3-dou-k1.5-ml183"
 drawdir = os.path.join(pycsresdir,drawname)
-selectedconf = 2
+selectedconf = 1
 
 def optfct(lcs):
-	return pycs.tdc.splopt.spl3(lcs, knotstepfact=1.0, mlknotstep=365, maxit=7, minchange=1.0, verbose=False)
+	return pycs.tdc.splopt.spl3(lcs, knotstepfact=1.5, mlknotstep=365, maxit=7, minchange=1.0, verbose=False)
 
 
 sploptfct = optfct # this would be different if your optfct is e.g. sdi !
@@ -60,7 +60,7 @@ db = pycs.gen.util.readpickle("joined.pkl").values()
 selection = [item for item in db if "confidence" in item and item["confidence"] == selectedconf]
 
 #selection = selection[:5]
-selection = selection[:10]
+#selection = selection[:10]
 
 ests = []
 for item in selection:
@@ -71,10 +71,10 @@ for item in selection:
 
 
 print "I have selected %i estimates." % (len(ests))
-
+'''
 for est in ests:
 	pycs.tdc.run3.createdir(est,drawdir)
-
+'''
 ########## And we run, and save the results into a summary pickle ##############
 
 
@@ -108,15 +108,15 @@ pycs.tdc.run3.viz(est, drawdir, datadir=datadir)
 
 # Compute the PyCS estimate for each pair, by summarizing the results on the copies and sims.
 # This also makes a check plot.
+print 'COUCOU'
 
-"""
 for est in ests:
 	pycs.tdc.run3.summarize(est, drawdir, makefig=True)
 
 # Collect the results into a single pickle.
 outests = pycs.tdc.run3.collect(ests, drawdir)
 pycs.gen.util.writepickle(outests, drawdir+'.pkl')
-"""
+
 
 
 

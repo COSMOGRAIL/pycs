@@ -15,7 +15,7 @@ makes a scatter plot of estimates vs D3CS combi, using colour to show distance f
 execfile('config.py')
 
 
-subname = 'pycs_tdc1_test'
+subname = 'pycs_tdc1_d3cs-vanilla-doupla-full'
 filepath = os.path.join(pycsresdir,'submissions',subname,subname+'.dt')
 dirpath = os.path.dirname(filepath)
 
@@ -87,7 +87,8 @@ d3cs_td = [db[subid]["d3cs_combi_td"] for subid in subids]
 d3cs_tderr = [db[subid]["d3cs_combi_tderr"] for subid in subids]
 d3cs_reltderr = [db[subid]["d3cs_combi_reltderr"] for subid in subids]
 
-cmap = [db[subid]["pycs_sdi-dou-c20-s100-m8-rall_d3cs_tdsep_in_d3cs_errs"] for subid in subids]
+cmap = [abs(info[1]-db[subid]["d3cs_combi_td"])/db[subid]["d3cs_combi_tderr"] for info,subid in zip(subinfos,subids)]
+
 
 
 # Check plots
@@ -117,4 +118,5 @@ plt.annotate('%s estimations' %len(sub_reltderr),xy=[0.7,0.5],xycoords='axes fra
 
 # and save the plot
 plt.show()
-plt.savefig(os.path.join(dirpath,'checksub_%s.png' %subname))
+#plt.savefig(os.path.join(dirpath,'checksub_%s.png' %subname))
+
