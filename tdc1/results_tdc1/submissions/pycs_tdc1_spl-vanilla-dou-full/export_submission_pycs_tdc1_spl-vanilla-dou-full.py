@@ -9,7 +9,7 @@ import os
 import numpy as np
 
 
-subname  = "pycs_tdc1_spl-vanilla-doupla-full"
+subname  = "pycs_tdc1_spl-vanilla-dou-full"
 filepath = os.path.join("results_tdc1",'submissions',subname,subname+'.dt')
 dirpath = os.path.dirname(filepath)
 commentlist = []
@@ -28,7 +28,7 @@ for entry in dbintdc1:
 	
 	isin = False
 	
-	if entry["confidence"] in [1, 2]:	
+	if entry["confidence"] in [1]:	
 		isin = True
 	
 	# And we build our selection:
