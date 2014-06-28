@@ -57,10 +57,9 @@ for entry in sel:
 			continue
 			
 		# Default cut in D3CS error bar for plausibles
-		if entry["confidence"] == 2 and entry["d3cs_combi_tderr"] > 30.0:
-			print "Pla D3CS error > 30: %i %i"% (entry["rung"], entry["pair"])
+		if entry["confidence"] in [2,3] and entry["d3cs_combi_tderr"] > 30.0:
+			print "D3CS error > 30: %i %i"% (entry["rung"], entry["pair"])
 			continue
-		
 		
 		est = pycs.tdc.est.Estimate(
 			set = "tdc1",
@@ -81,8 +80,7 @@ for entry in sel:
 print "I could build %i estimates" % (len(estimates))	
 
 
-pycs.tdc.metrics.maxPplot([estimates], N=5120, filepath = os.path.join(dirpath,"%s.maxPplot.png" %subname))
-
+# The godtweak
 cleanestimates = pycs.tdc.util.godtweak(estimates)
 
 # For the sortbyP:
@@ -94,16 +92,28 @@ for cleanest in cleanestimates: # because of sorted !
 
 # Now the XbestP selection, just before writing the submission:
 
-"""
+
+#selectPestimates = cleanestimates
+
 sortedPestimates = pycs.tdc.metrics.sortbyP(cleanestimates)
-n=1600
-selectPestimates = sortedPestimates[-n:]
-"""
+n=100
+selectPestimates = sortedPestimates
+#selectPestimates = sortedPestimates[-n:]
 
-pycs.tdc.util.writesubmission(cleanestimates, filepath, commentlist)
+pycs.tdc.util.writesubmission(selectPestimates, filepath, commentlist)
 
+pycs.tdc.metrics.maxPplot([selectPestimates], N=5120, filepath = os.path.join(dirpath,"%s.maxPplot.png" %subname))
 os.system('cp export_submission.py %s' %os.path.join(dirpath,'export_submission_%s.py' %subname))
 
 
+#####
+# This tells you the n to select so to get 3% of average P
 
+for n in range(1, len(sortedPestimates)):
+	meanP = np.mean(np.array([abs(est.tderr / est.td) for est in sortedPestimates[-n:]]))
+	#print n, meanP
+	if meanP >= 0.03:
+		print "P = 3%% would be reached by selecting %i best curves" % (n)
+		break
+#####
 

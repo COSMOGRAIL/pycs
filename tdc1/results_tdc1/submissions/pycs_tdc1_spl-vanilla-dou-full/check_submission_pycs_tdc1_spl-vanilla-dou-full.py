@@ -119,6 +119,7 @@ plt.annotate('%s estimations' %len(sub_reltderr),xy=[0.7,0.5],xycoords='axes fra
 # and save the plot
 #plt.show()
 plt.savefig(os.path.join(dirpath,'checksub_%s.png' %subname))
+print "Saved", os.path.join(dirpath,'checksub_%s.png' %subname)
 os.system('cp check_submission.py %s' %os.path.join(dirpath,'check_submission_%s.py' %subname))
 
 
