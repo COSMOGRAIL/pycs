@@ -12,7 +12,7 @@ import numpy as np
 subname  = subname
 filepath = os.path.join("results_tdc1",'submissions',subname,subname+'.dt')
 dirpath = os.path.dirname(filepath)
-commentlist = ["D3CS combi", "VB estimations", "doubtless and plausibles estimates", "full range"]
+commentlist = ["D3CS combi", "MT estimations", "doubtless,plausibleestimates", "full range"]
 
 print ''
 print 'You are going to run on %s' % subname
@@ -86,14 +86,19 @@ pairs = pycs.tdc.util.listtdc1v2pairs()
 iniests = pycs.tdc.est.importfromd3cs(d3cslogpath)
 iniests = pycs.tdc.est.select(iniests, pairs= pairs)
 
-# Select Vivien only
+# Select Malte only
 
-estimates = [est for est in iniests if est.methodpar == "Vivien"]
+estimates = [est for est in iniests if est.methodpar == "mtewes"]
 
 
-# Select the confidence level
+# Tweak to write only what has been estimated by Malte
 estimates = pycs.tdc.est.multicombine(estimates,method='d3cscombi1-keepbestconf') # to remove doublons...
-estimates = [est for est in estimates if est.confidence in [1,2]] #doubtless only
+
+# put everything we do not want to select at -99.00
+for est in estimates:
+	if est.confidence not in [1,2]: 
+		est.td = 99.00
+		est.tderr = -99.00
 
 
 # Standard D3CS rejection:
@@ -104,9 +109,9 @@ if not os.path.isdir(dirpath):
 	print 'I create the new submission directory %s \n' %dirpath
 	os.mkdir(dirpath)
 
-# cleanestimates = pycs.tdc.util.godtweak(estimates) # Hands off, God ! 
 
-cleanestimates = estimates
+#cleanestimates = pycs.tdc.util.godtweak(estimates)
+cleanestimates = [est for est in estimates if est.confidence in [1,2]]
 
 for cleanest in cleanestimates: # because of sorted !
 	if cleanest.td == 0.0:
@@ -124,7 +129,7 @@ selectPestimates = sortedPestimates # do nothing
 
 
 pycs.tdc.metrics.maxPplot([selectPestimates], N=5120, filepath = os.path.join(dirpath,"%s.maxPplot.png" %subname))
-pycs.tdc.util.writesubmission(selectPestimates, filepath, commentlist)
+pycs.tdc.util.writesubmission(estimates, filepath, commentlist, theseonly = True) # And write only the current estimates
 
 os.system('cp export_submission.py %s' %os.path.join(dirpath,'export_submission_%s.py' %subname))
 

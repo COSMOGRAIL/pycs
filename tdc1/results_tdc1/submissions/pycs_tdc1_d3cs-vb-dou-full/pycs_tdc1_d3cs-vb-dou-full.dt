@@ -1,5 +1,5 @@
 # TDC submission written by PyCS
-# 2014-06-27 19:21:09.915854
+# 2014-06-29 14:57:11.905610
 # 
 # Malte Tewes <mtewes@astro.uni-bonn.de>, Uni Bonn
 # Vivien Bonvin <vivien.bonvin@epfl.ch>, EPFL
@@ -9,8 +9,8 @@
 # 2246 estimates have been selected
 # Comments:
 #   D3CS combi
-#   vanilla parameters
-#   doubtless and plausible estimates
+#   VB estimations
+#   doubtless estimates
 #   full range
 # 
 # datafile                         dt          dterr
@@ -570,7 +570,7 @@ tdc1_rung0_double_pair553.txt	    8.90	    6.40
 tdc1_rung0_double_pair554.txt	  -16.90	    6.70
 tdc1_rung0_double_pair555.txt	   89.00	    5.90
 tdc1_rung0_double_pair556.txt	   20.20	    7.90
-tdc1_rung0_double_pair557.txt	   90.40	    3.50
+tdc1_rung0_double_pair557.txt	   90.40	    4.90
 tdc1_rung0_double_pair558.txt	  -84.60	    6.60
 tdc1_rung0_double_pair559.txt	   32.00	    7.70
 tdc1_rung0_double_pair560.txt	    7.20	    7.50
@@ -3678,7 +3678,7 @@ tdc1_rung3_double_pair589.txt	  -99.00	  -99.00
 tdc1_rung3_double_pair590.txt	  -99.00	  -99.00
 tdc1_rung3_double_pair591.txt	  -99.00	  -99.00
 tdc1_rung3_double_pair592.txt	  -35.90	    4.20
-tdc1_rung3_double_pair593.txt	  -82.10	    4.00
+tdc1_rung3_double_pair593.txt	  -82.10	    5.00
 tdc1_rung3_double_pair594.txt	  -99.00	  -99.00
 tdc1_rung3_double_pair595.txt	 -101.30	    4.80
 tdc1_rung3_double_pair596.txt	   25.30	    4.20
@@ -3697,7 +3697,7 @@ tdc1_rung3_double_pair608.txt	  -99.00	  -99.00
 tdc1_rung3_double_pair609.txt	  -99.00	  -99.00
 tdc1_rung3_double_pair610.txt	  -99.00	  -99.00
 tdc1_rung3_double_pair611.txt	  -87.50	    6.20
-tdc1_rung3_double_pair612.txt	   61.80	    3.00
+tdc1_rung3_double_pair612.txt	   61.80	    4.40
 tdc1_rung3_double_pair613.txt	  -99.00	  -99.00
 tdc1_rung3_double_pair614.txt	  -99.00	  -99.00
 tdc1_rung3_double_pair615.txt	  -11.90	    6.50

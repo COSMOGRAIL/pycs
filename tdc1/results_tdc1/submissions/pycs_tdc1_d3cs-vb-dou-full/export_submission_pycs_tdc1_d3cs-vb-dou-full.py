@@ -12,7 +12,7 @@ import numpy as np
 subname  = subname
 filepath = os.path.join("results_tdc1",'submissions',subname,subname+'.dt')
 dirpath = os.path.dirname(filepath)
-commentlist = ["D3CS combi", "vanilla parameters", "doubtless and plausible estimates", "full range"]
+commentlist = ["D3CS combi", "VB estimations", "doubtless estimates", "full range"]
 
 print ''
 print 'You are going to run on %s' % subname
@@ -97,16 +97,16 @@ estimates = [est for est in estimates if est.confidence in [1]] #doubtless only
 
 
 # Standard D3CS rejection:
-estimates = [est for est in estimates if est.tderr < 30.0]
+# estimates = [est for est in estimates if est.tderr < 30.0]
 
 
 if not os.path.isdir(dirpath):
 	print 'I create the new submission directory %s \n' %dirpath
 	os.mkdir(dirpath)
 
-cleanestimates = pycs.tdc.util.godtweak(estimates)
+# cleanestimates = pycs.tdc.util.godtweak(estimates) # Hands off, God ! 
 
-
+cleanestimates = estimates
 
 for cleanest in cleanestimates: # because of sorted !
 	if cleanest.td == 0.0:
