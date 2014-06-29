@@ -9,7 +9,7 @@ import os
 import numpy as np
 
 
-subname  = "pycs_tdc1_spl-vanilla-doupla-full"
+subname  = "pycs_tdc1_spl-vanilla-doupla-P3percent"
 filepath = os.path.join("results_tdc1",'submissions',subname,subname+'.dt')
 dirpath = os.path.dirname(filepath)
 commentlist = []
@@ -101,9 +101,9 @@ for cleanest in cleanestimates:
 
 # Now the XbestP selection, just before writing the submission:
 sortedPestimates = pycs.tdc.metrics.sortbyP(cleanestimates)
-n=100
-selectPestimates = sortedPestimates
-#selectPestimates = sortedPestimates[-n:]
+n=2269
+#selectPestimates = sortedPestimates
+selectPestimates = sortedPestimates[-n:]
 
 # 
 """

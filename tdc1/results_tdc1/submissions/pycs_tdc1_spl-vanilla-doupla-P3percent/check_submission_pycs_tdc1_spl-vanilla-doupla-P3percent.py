@@ -15,7 +15,7 @@ makes a scatter plot of estimates vs D3CS combi, using colour to show distance f
 execfile('config.py')
 
 
-subname = "pycs_tdc1_spl-vanilla-doupla-full"
+subname = "pycs_tdc1_spl-vanilla-doupla-P3percent"
 filepath = os.path.join(pycsresdir,'submissions',subname,subname+'.dt')
 dirpath = os.path.dirname(filepath)
 
