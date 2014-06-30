@@ -46,12 +46,32 @@ This first method is based on human inspection of the light curves, in the spiri
 \item ``multimodal'' if the proposed solution is only one among two or more possible solutions,
 \item ``uninformative'' if the data does not reveal any delay.
 \end{enumerate}
-Only a small circle of scientists has participated to the visual inspection of TDC1, yet we obtained at least two estimates by different people for each curve pair. This data was carefully ``reduced'' to a single estimate per pair, resolving any conflicts between estimates in a conservative way. A key result of this step is a sample of 1628 ``doubtless'' time-delay estimates, which, as we hope, is \emph{free} from any catastrophic outliers. Through this experiement, we have demonstrated that such an approach remains well tractable for about 5000 light curves.
+Only a small circle of scientists has participated to the visual inspection of TDC1, yet we obtained at least two estimates by different people for each curve pair. Different users have taken significantly different typical amount of time to register their estimates, from $\approx 25$ s per pair for ``fast'' users (vb) to $> 60$ s per pair for ``slow'' users (mt). We have included submissions using raw estimates from such different users in our blind submission set. The database of d3cs estimates was then carefully ``reduced'' to a single estimate per pair, resolving any conflicts between estimates in a conservative way. A key result of this step is a sample of 1628 ``doubtless'' time-delay estimates, which, as we hope, is \emph{free} from any catastrophic outliers. Through this experiement, we have demonstrated that such an approach remains well tractable for about 5000 light curves.
 
-\subsection{spl}
+\subsection{spl: free-knot spline fit}
+This method can be seen as a simplified version of the ``free-knot spline technique'' described in \citet{pycs}. Using the d3cs estimate as starting point, the method simultaneously fits one single spline representing the intrinsic QSO variability and a smoother ``extrinsic'' spline representing the differential microlensing variability to the light curves. During this iterative process, the curves are shifted in time so as to optimize the fit. Such a model fit is then used to generate 40 simulated noisy light curves with a range of true time delays around the best-fit solution. By rerunning the spline fit on these simulated curves, and comparing the resulting delays with the true input time delays, the delay measurement uncertainty is estimated.
+
+
+
+The entire process takes about 5 CPU-minutes for an average TDC1 pair, which is of the order of 50 times faster than the analysis of 
+
+
 
 \subsection{sdi}
 
+
+D3CS decides about the confidence we have in a time delay estimation. PyCS is not allowed to yield estimates that are not compatible with D3CS. “Do not trust a delay which you can't see by eye”.
+PyCS CPU time (per curve, starting from a good initial time delay), 5 CPU-min. Much faster than the analysis of cosmograil curves.
+D3CS time
+After the D3CS stage, there is no more human “tweaking”, it's all algorithms. So for instance we do not redo pycs simulations because the spline fit looks weird etc.
+Simplifications of spline technique
+
+no fast ML signal is added to the simulated light curves. Only plain regular white noise.
+We draw only 40 simulated curves with randomized “true” delays, but do not split up the analysis by bins of true delay. We just take the RMS error of the delay measurements on these sims as our total error.
+So it does not try to be overly careful or conservative. We did not leave in any “security margin” in the error-bar computation, and expect our spl error bars to be on the low side.
+
+
+\section{}
 
 We have 3 methods: d3cs, spl, and sdi, which act in 2 stages:
 
@@ -81,7 +101,7 @@ The second method, spl (for Spline), use the d3cs method estimations as input pa
 
 The third method, sdi (for Spline DIfference), also use the d3cs method estimations as input parmaeters. For each pair, the method fits a spline in each lightcurve, and then minimize the difference between the two splines, by shifting them in time around the d3cs input estimation. Again, the values of the delay and error are computed on copies and simulation of the original curves.
 
-\citep{pycs}
+
 
 
 \begin{acknowledgements}
