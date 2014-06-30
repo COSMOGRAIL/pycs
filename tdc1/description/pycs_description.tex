@@ -34,7 +34,7 @@ Argelander-Institut f\"ur Astronomie, Auf dem H\"ugel 71, D-53121 Bonn, Germany 
 % -A description of the strategy you have used to identify catastrophic failures
 %We realize there is not a lot of time between now and the deadline, but it is important that this paragraph of text be written blind as well. Please keep it short! This is only meant to be a brief summary for each team. We encourage you to write up your method separately if you wish so.
 
-\section{Method description}
+\section{PyCS method descriptions}
 
 The PyCS team has made submissions using 3 time-delay measurement methods: \emph{d3cs}, \emph{spl}, and \emph{sdi}. The last two of them build upon initial estimations provided by the first one. We summarize the methods in the following. 
 
@@ -49,8 +49,35 @@ This first method is based on human inspection of the light curves, in the spiri
 Only a small circle of scientists has participated to the visual inspection of TDC1, yet we obtained at least two estimates by different people for each curve pair. Different users have taken significantly different typical amount of time to register their estimates, from $\approx 25$ s per pair for ``fast'' users (vb) to $> 60$ s per pair for ``slow'' users (mt). We have included submissions using raw estimates from such different users in our blind submission set. The database of d3cs estimates was then carefully ``reduced'' to a single estimate per pair, resolving any conflicts between estimates in a conservative way. A key result of this step is a sample of 1628 ``doubtless'' time-delay estimates, which, as we hope, is \emph{free} from any catastrophic outliers. Through this experiement, we have demonstrated that such an approach remains well tractable for about 5000 light curves.
 
 \subsection{spl: free-knot spline fit}
-This method can be seen as a simplified version of the ``free-knot spline technique'' described in \citet{pycs}. Using the d3cs estimate as starting point, the method simultaneously fits one single spline representing the intrinsic QSO variability and a smoother ``extrinsic'' spline representing the differential microlensing variability to the light curves. During this iterative process, the curves are shifted in time so as to optimize the fit. Such a model fit is then used to generate 40 simulated noisy light curves with a range of true time delays around the best-fit solution. By rerunning the spline fit on these simulated curves, and comparing the resulting delays with the true input time delays, the delay measurement uncertainty is estimated.
+This method can be seen as a simplified version of the ``free-knot spline technique'' described in \citet{pycs} and implemented in the PyCS software package. Using the d3cs estimate as starting point, the method simultaneously fits one single spline representing the intrinsic QSO variability and a smoother ``extrinsic'' spline representing the differential microlensing variability to the light curves. During this iterative process, the curves are shifted in time so as to optimize the fit. We repeat this fit 20 times, starting form different initial conditions, to test and improve the robustness of the resulting delay against local minima. Such a model fit is then used to generate 40 simulated noisy light curves with a range of true time delays around the best-fit solution. By rerunning the spline fit on these simulated curves, and comparing the resulting delays with the true input time delays, the delay measurement uncertainty is estimated.
 
+The \emph{spl} method for TDC1 is simpler, faster, and significantly less conservative in the uncertainty estimation than the free-knot spline technique as applied to COSMOGRAIL data in \citet{Tewes:2013iz} and \citet{RathnaKumar:2013eu}. In particular:
+\begin{enumerate}
+\item The temporal density of spline knots controling the flexibility of the intrinsic spline is computed from the signal-to-noise ratios measured on the two light curves, using an empirical calibration. These signal-to-noise ratios compare the typical amplitude of variability observed in a window of 50 to 75 days with the typical variability from one epoch to the next, that is the ``scatter''. For the extrinsic spline, the knot density is fixed to be the same for all TDC1 pairs.
+\item We do not inject any fast microlensing signal into the simulated light curves on top of the smooth microlensing fit determined using the data. Only plain white noise is added to the generative model. 
+\item We do not analyse the delay measurement errors on the simulated curves as a function of true delay. Instead, only the RMS error of these delay measurements is used as our total uncertainty estimate. 
+\item Finally, we do not manually fine-tune any parameters or correct for problematic model fits. 
+\end{enumerate}
+These simplifications, and the fact that we did not  remove any form of ``safety margin''
+
+. On purpose, to aim for a $\chi^2$ of 1.0
+
+
+
+
+
+ and applied in 
+
+ and sdi are simpler, faster, and also less conservative in their uncertainty estimation. There is no "safety margin" left.
+
+
+
+After the D3CS stage, there is no more human “tweaking”, it's all algorithms. So for instance we do not redo pycs simulations because the spline fit looks weird etc.
+Simplifications of spline technique
+
+no fast ML signal is added to the simulated light curves. Only plain regular white noise.
+We draw only 40 simulated curves with randomized “true” delays, but do not split up the analysis by bins of true delay. We just take the RMS error of the delay measurements on these sims as our total error.
+So it does not try to be overly careful or conservative. We did not leave in any “security margin” in the error-bar computation, and expect our spl error bars to be on the low side.
 
 
 The entire process takes about 5 CPU-minutes for an average TDC1 pair, which is of the order of 50 times faster than the analysis of 
