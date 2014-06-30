@@ -1,0 +1,50 @@
+\documentclass[traditabstract]{aa}
+
+\usepackage{graphicx}
+\usepackage{txfonts}
+\usepackage{natbib}
+\usepackage{xspace}
+\usepackage{url}
+\bibpunct{(}{)}{;}{a}{}{,}
+
+\begin{document}
+
+\title{PyCS time delay measurement on TDC1}
+\author{ In alphabetical order:
+V. Bonvin\inst{\ref{epfl}} \and
+F. Courbin\inst{\ref{epfl}} \and
+M. Tewes\inst{\ref{bonn}}
+}
+
+\institute{
+Laboratoire d'astrophysique, Ecole Polytechnique F\'ed\'erale de Lausanne (EPFL), Observatoire de Sauverny, 1290 Versoix, Switzerland \label{epfl}
+\and
+Argelander-Institut f\"ur Astronomie, Auf dem H\"ugel 71, D-53121 Bonn, Germany \label{bonn}
+}
+
+\date{\today}
+%\abstract{}
+
+\maketitle
+
+\section{Introduction}
+
+
+Our submissions are grouped in various methods, each of them using different method parameters, then splitted into confidence categories, on which we finally apply different filters. That structure is reflected in the name of each submission, presented as pycs\_tdc1\_method-parameters-confidence-filter.dt
+
+The first method, d3cs (for D3 Curve Shifting, D3 being a JavaScript applet), is based on an humain visualisation of the pairs, estimating the time delay and the time delay error by eye. Multiple estimations have been obtained for each pair, and have been carefully combined to get one single estimation per pair.
+
+The second method, spl (for Spline), use the d3cs method estimations as input parameters. For each pair, shifted by the delay found with d3cs, the method fits a spline through both lightcurves, and adapt the delay to minimise the residuals of the data with respect to the spline. The presence of microlensing in one of the two lightcurves is taken into account when fitting the spline. The values of the delay and error are computed by applying the method on numerous copies and simulations of the original curves.
+
+The third method, sdi (for Spline DIfference), also use the d3cs method estimations as input parmaeters. For each pair, the method fits a spline in each lightcurve, and then minimize the difference between the two splines, by shifting them in time around the d3cs input estimation. Again, the values of the delay and error are computed on copies and simulation of the original curves.
+
+\citep{pycs}
+
+
+\bibliographystyle{aa}
+\bibliography{papers}
+
+\end{document}
+
+
+
