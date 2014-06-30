@@ -27,7 +27,34 @@ Argelander-Institut f\"ur Astronomie, Auf dem H\"ugel 71, D-53121 Bonn, Germany 
 
 \maketitle
 
+
+% -Authors and affiliations
+% -Description of your method(s)
+% -Description of internal testing and/or references to prior applications of the method
+% -A description of the strategy you have used to identify catastrophic failures
+%We realize there is not a lot of time between now and the deadline, but it is important that this paragraph of text be written blind as well. Please keep it short! This is only meant to be a brief summary for each team. We encourage you to write up your method separately if you wish so.
+
 \section{Introduction}
+
+We have 3 methods: d3cs, spl, and sdi, which act in 2 stages:
+
+Stage 1: d3cs yields rough initial time delay estimates (one per pair) as well as a characterization of the confidence that this delay estimate is not a catastrophic error. This confidence is encoded in 3 levels: "dou" for doubtless, "pla" for plausible, "mul" for multimodal.
+
+Stage 2: spl or sdi build on top of the d3cs results, to increase accuracy and precision, but without changing the confidence level. The spl and sdi algorithms are inspired by the spline and regdiff methods from COSMOGRAIL, respectively. However, spl and sdi are simpler, faster, and also less conservative in their uncertainty estimation. There is no "safety margin" left.
+
+For all three methods, our submissions are named according to the same convention: "pycs\_tdc1\_A-B-C-D.dt", where
+ * A: method, that is d3cs, spl or sdi
+ * B: method parameters ("vanilla" corresponds to the default settings, which we think are best or simplest)
+ * C: confidence categories: "dou" for doubtless, "doupla" for both doubtless and plausible light curve pairs
+ * D: filters that reject some delays following different criteria ("full" corresponds to no filter).
+
+Submissions that share the same method and method parameters differ only in the selection/rejection of delays. The numerical values for delays and errors in these submissions are identical.
+
+We analyzed all TDC1 curves, and so our submissions are "filled" with -99 flags. The only exception to this is the method "d3cs-mt", that saw only part of TDC1. Its submission files therefore do not cover the full TDC1.
+
+If we would have to blindly select a single submission which is at the same time very ambitious in terms of P, f, and with a median chi2 hopefully close to 1, it would be
+pycs\_tdc1\_spl-median-doupla-splagree.dt
+It consists of the median of estimates from different spl variants, rejecting those delays for which the spl variants do not agree well.
 
 
 Our submissions are grouped in various methods, each of them using different method parameters, then splitted into confidence categories, on which we finally apply different filters. That structure is reflected in the name of each submission, presented as pycs\_tdc1\_method-parameters-confidence-filter.dt
@@ -41,8 +68,14 @@ The third method, sdi (for Spline DIfference), also use the d3cs method estimati
 \citep{pycs}
 
 
+\begin{acknowledgements}
+VB and FC are supported by the Swiss National Science Foundation (SNSF). MT acknowledges support by the DFG grant Hi 1495/2-1.
+\end{acknowledgements}
+
+
+
 \bibliographystyle{aa}
-\bibliography{papers}
+\bibliography{pycs_description}
 
 \end{document}
 
