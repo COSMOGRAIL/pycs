@@ -62,10 +62,10 @@ These simplifications remove any form of ``safety margin'' from the free-knot sp
 
 \subsection{\tt sdi}
 
-Our third method, {\tt sdi} (for spline dIfference) is inspired by the ``regression difference technique'' of \citet{pycs}, replacing the Gaussian process regressions by spline fits, to speed up the analysis. The method fits a different spline to each of the two light curve, and then minimizes the variability of the difference between these two splines by shifting them in time with respect to each other. The advantage of this approach is that it does not require an explicit microlensing model. To estimate the uncertainty, this method uses the simulated light curves provided by the {\tt spl} technique. As for the {\tt spl} technique, the estimates from {\tt d3cs} are used as starting point to define the time delay intervals in which {\tt sdi} optimizes its cost function. We systematically discard a small number of {\tt spl} and {\tt sdi} measurements that do not lie within 1.5$\sigma$ of the corresponding {\tt d3cs} estimates.
+Our third method, {\tt sdi} (for spline difference) is inspired by the ``regression difference technique'' of \citet{pycs}, replacing the Gaussian process regressions by spline fits, to speed up the analysis. The method fits a different spline to each of the two light curve, and then minimizes the variability of the difference between these two splines by shifting them in time with respect to each other. The advantage of this approach is that it does not require an explicit microlensing model. To estimate the uncertainty, this method uses the simulated light curves provided by the {\tt spl} technique. As for the {\tt spl} technique, the estimates from {\tt d3cs} are used as starting point to define the time delay intervals in which {\tt sdi} optimizes its cost function. We systematically discard a small number of {\tt spl} and {\tt sdi} measurements that do not lie within 1.5$\sigma$ of the corresponding {\tt d3cs} estimates.
 
 
-\vspace{30pt}
+\subsection{Catastrophic failures and testing}
 
 To prevent catastrophic failures, we rely solely on the {\tt d3cs} ``doubtless'' sample. The {\tt spl} and {\tt sdi} methods do not affect this confidence classification. We explore the importance of a high-purity selection through submissions that mix the ``doubtless'' and ``plausible'' categories, which will certainly be contaminated by some catastrophic outliers, but feature more than twice the number of time delays.
 
