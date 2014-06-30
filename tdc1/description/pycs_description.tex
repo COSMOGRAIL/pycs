@@ -34,7 +34,24 @@ Argelander-Institut f\"ur Astronomie, Auf dem H\"ugel 71, D-53121 Bonn, Germany 
 % -A description of the strategy you have used to identify catastrophic failures
 %We realize there is not a lot of time between now and the deadline, but it is important that this paragraph of text be written blind as well. Please keep it short! This is only meant to be a brief summary for each team. We encourage you to write up your method separately if you wish so.
 
-\section{Introduction}
+\section{Method description}
+
+The PyCS team has made submissions using 3 time-delay measurement methods: \emph{d3cs}, \emph{spl}, and \emph{sdi}. The last two of them build upon initial estimations provided by the first one. We summarize the methods in the following. 
+
+\subsection{d3cs: D3 curve shifting}
+This first method is based on human inspection of the light curves, in the spirit of citizen science projects. We have developed a dedicated browser-based visualization interface, using the D3.js JavaScript library\footnote{Data Driven Documents, \url{http://www.d3js.org/}} by \citet{d3}. Our tool is now publicly available online\footnote{\url{http://www.astro.uni-bonn.de/~mtewes/d3cs/tdc1/} (See ``Read me first'' for help)} [Note: not sure if you/we want to leave this URL in the TDC paper, but feel free to explore and register estimates!]. The main motivations behind this time-costly yet simple approach was to obtain, for each curve pair, (1) a rough initial estimate for the time delay and associated uncertainty, and (2) a robust characterization of the confidence that this estimate is not a catastrophic error. Our interface allows users to interactively shift the light curves in time, magnitude, and flux, and to zoom in on interesting sections of the data. This enables users to estimate both the time delay and an associated uncertainty. Importantly, the interface also asks to pick a confidence category for the proposed solution, among 4 choices:
+\begin{enumerate}
+\item ``doubtless'' if a catastrophic error can be excluded with a very high confidence,
+\item ``plausible'' if the solution yields a good fit and no other solutions are seen,
+\item ``multimodal'' if the proposed solution is only one among two or more possible solutions,
+\item ``uninformative'' if the data does not reveal any delay.
+\end{enumerate}
+Only a small circle of scientists has participated to the visual inspection of TDC1, yet we obtained at least two estimates by different people for each curve pair. This data was carefully ``reduced'' to a single estimate per pair, resolving any conflicts between estimates in a conservative way. A key result of this step is a sample of 1628 ``doubtless'' time-delay estimates, which, as we hope, is \emph{free} from any catastrophic outliers. Through this experiement, we have demonstrated that such an approach remains well tractable for about 5000 light curves.
+
+\subsection{spl}
+
+\subsection{sdi}
+
 
 We have 3 methods: d3cs, spl, and sdi, which act in 2 stages:
 
@@ -59,8 +76,7 @@ It consists of the median of estimates from different spl variants, rejecting th
 
 Our submissions are grouped in various methods, each of them using different method parameters, then splitted into confidence categories, on which we finally apply different filters. That structure is reflected in the name of each submission, presented as pycs\_tdc1\_method-parameters-confidence-filter.dt
 
-The first method, d3cs (for D3 Curve Shifting, D3 being a JavaScript applet), is based on an humain visualisation of the pairs, estimating the time delay and the time delay error by eye. Multiple estimations have been obtained for each pair, and have been carefully combined to get one single estimation per pair.
-
+The first method, d3cs (for D3 Curve Shifting, D3 being a JavaScript applet), 
 The second method, spl (for Spline), use the d3cs method estimations as input parameters. For each pair, shifted by the delay found with d3cs, the method fits a spline through both lightcurves, and adapt the delay to minimise the residuals of the data with respect to the spline. The presence of microlensing in one of the two lightcurves is taken into account when fitting the spline. The values of the delay and error are computed by applying the method on numerous copies and simulations of the original curves.
 
 The third method, sdi (for Spline DIfference), also use the d3cs method estimations as input parmaeters. For each pair, the method fits a spline in each lightcurve, and then minimize the difference between the two splines, by shifting them in time around the d3cs input estimation. Again, the values of the delay and error are computed on copies and simulation of the original curves.
