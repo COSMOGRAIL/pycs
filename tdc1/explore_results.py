@@ -42,7 +42,27 @@ def recombine_submissions(results):
 	for method in methods:
 
 		combi = {}
-		relateds = [result for result in results if result["algorithm"] == method]	
+		relateds = [result for result in results if result["algorithm"] == method]
+		
+		"""
+		how to get chi2 combined, P combined...:
+		
+		if P1 = 1/(f1*N)*sum(blahblah1) and P2 = 1/(f2*N)*sum(blahblah2)
+		
+		N*(f1*P1+f2*P2) = sum(blahblah1)+sum(blahblah2)=sum(blahblah12)
+		
+		or,
+		
+		P12 = 1/{[(f1+f2)/2]*2N}*sum(blahblah12)
+		
+		then,
+		
+		N*(f1+f2)*P12 = sum(blahblah12) = sum(blahblah1) + sum(blahblah2) = N*(f1*P1+f2*P2)
+		
+		thus,
+		
+		P12 = sum(fi*Pi)/sum(fi), thus the computations below for chi2, P and A
+		"""	
 
 
 		combi["team"] = relateds[0]["team"]
