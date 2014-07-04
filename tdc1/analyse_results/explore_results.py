@@ -197,8 +197,8 @@ sys.exit()
 '''
 
 for combi in results:
-	if float(combi["P"]) < 0.03 and abs(float(combi["A"])) < 0.002 and float(combi["f"]) > 0.2 and float(combi["chi2"]) < 1.5 and float(combi["chi2"]) > 0.5:
-		print combi["team"],combi["algorithm"],'rung',combi["rung"],' pass TDC0 criterias !'
+	if float(combi["P"]) < 0.03 and abs(float(combi["A"])) < 0.002 and float(combi["f"]) > 0.1 and float(combi["chi2"]) < 1.5 and float(combi["chi2"]) > 0.5:
+		print combi["team"],combi["algorithm"],'rung',combi["rung"],'have an A = %s' %combi["A"]
 
 
 
