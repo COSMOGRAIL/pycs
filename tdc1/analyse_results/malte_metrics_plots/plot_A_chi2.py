@@ -7,9 +7,9 @@ from itertools import cycle
 matplotlib.rcParams.update({'font.size': 15})
 
 df = pd.read_csv("metrics.csv").dropna(how='any')
-df = df[df["rung"] == 0]
+df = df[df["rung"] == 3]
 #df = df[np.fabs(df["f"] - 0.25) <= 0.05 ]
-df = df[df["f"] > 0.3]
+#df = df[df["f"] > 0.3]
 
 fig = plt.figure(figsize=(15, 10))
 fig.subplots_adjust(bottom=0.10, top=0.95, left=0.10, right=0.95)
@@ -51,7 +51,8 @@ for team in teams:
 	
 	for (i, sub) in seldf.iterrows():
 		#s = "%i" % (sub["rung"])
-		s = "%s" % (sub["algorithm"])
+		#s = "%s" % (sub["algorithm"])
+		s = "%.2f" % (sub["f"])
 		offset = np.random.uniform(-30, 30, 2)
 		#print offset
 		pos = np.array([sub["chi2"], abs(sub["A"])])
