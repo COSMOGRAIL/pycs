@@ -56,10 +56,11 @@ for rung in range(5):
 	
 		index = [line.split(' ')[0] for line in truth].index(name)
 		
-
 		db[pairid]["truetd"] = -1.0* float(truth[index].split(' ')[-1]) # Do NOT forget the "-" sign to match pycs standards
 
-
+		# Pairs such that truetd < 10 are discarded for the analysis
+		if abs(db[pairid]["truetd"]) <10.0:
+			db[pairid]["in_tdc1"] = 0 
 		
 ##############   Add pycs submissions values  ##############
 
