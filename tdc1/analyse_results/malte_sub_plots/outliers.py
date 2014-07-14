@@ -1,0 +1,53 @@
+import pycs
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.stats import norm
+
+
+
+db = pycs.gen.util.readpickle("../db.pkl").values()
+db = [item for item in db if item["in_tdc1"] == 1] # No need for the other ones
+db = [item for item in db if abs(item["truetd"]) > 10.0]
+
+
+#db = [item for item in db if item["rung"] == 0]
+
+colors = ["red", "blue", "green"]
+
+fig = plt.figure(figsize=(10, 10))
+fig.subplots_adjust(bottom=0.15, top=0.95, left=0.15, right=0.95)
+
+#"pycs_tdc1_d3cs-vanilla-dou-full"
+subnames = ["pycs_tdc1_spl-vanilla-dou-full", "pycs_tdc1_sdi-vanilla-dou-full"]
+subnames = ["pycs_tdc1_spl-vanilla-doupla-full", "pycs_tdc1_spl-median-doupla-splagree"]
+
+
+for subi, subname in enumerate(subnames):
+
+	seldb = [item for item in db if subname + "_td" in item] # We keep only the entries that have this submission
+	print subname, len(seldb), len(seldb)/1024.0
+
+	truetds = np.array([item["truetd"] for item in seldb])
+	abstruetds = np.fabs(truetds)
+	subtds = np.array([item[subname + "_td"] for item in seldb])
+	subtderrs = np.array([item[subname + "_tderr"] for item in seldb])
+	
+	plt.errorbar(truetds, subtds - truetds, subtderrs, linestyle="none", color = colors[subi], label="%s (%i points)" % (subname, len(seldb)))
+	
+
+#exit()
+#x = np.linspace(-range, range, 1000)
+#plt.plot(x, norm.pdf(x, 0.0, 1.0), color="black", label="Standard normal distribution")
+
+#plt.title("All rungs")
+plt.xlabel(r"$\Delta t_i$", fontsize=26)
+#plt.ylabel(r"$\frac{\widetilde{\Delta t_i} - \Delta t_i}{\sigma_i}$", fontsize=26)
+plt.ylabel(r"$\widetilde{\Delta t_i} - \Delta t_i$", fontsize=26)
+
+
+#plt.xlim(-range, range)
+#plt.ylim(-4, 4)
+plt.legend()
+plt.show()
+#plt.savefig("test.pdf")
+
