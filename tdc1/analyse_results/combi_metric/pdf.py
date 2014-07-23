@@ -48,7 +48,7 @@ for subi, subname in enumerate(subnames):
 
 	ytot = np.zeros(samples) # the log-posterior.
 	N = len(seldb)
-	#N=1
+	#N=5
 	for i in range(N):
 	
 		#y = norm.pdf(x, centers[i], sigmas[i])
@@ -65,6 +65,17 @@ for subi, subname in enumerate(subnames):
 	pdf = pdf / (np.sum(pdf)*(x[1] - x[0])) 
 	
 	plt.plot(x, pdf, label=subname)
+	
+	# Try to reproduce this by direct computation:
+	
+	(center_combi, sigma_combi) = pycs.tdc.metrics.combigauss(subtds, subtderrs, truetds, lensmodelsigma)
+	# That's what it does:
+	#sigma_combi = 1.0 / np.sqrt(np.sum(1.0 / (sigmas**2)))
+	#center_combi = sigma_combi**2 * np.sum( centers/sigmas**2 )
+	
+	plt.plot(x, norm.pdf(x, center_combi, sigma_combi), ls="--", color="black")
+	
+	
 
 ax = plt.gca()
 plt.axvline(0.0, ls="--", color="gray")
