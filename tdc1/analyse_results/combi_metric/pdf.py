@@ -68,7 +68,9 @@ for subi, subname in enumerate(subnames):
 	
 	# Try to reproduce this by direct computation:
 	
-	(center_combi, sigma_combi) = pycs.tdc.metrics.combigauss(subtds, subtderrs, truetds, lensmodelsigma)
+	(center_combi, sigma_combi, probazero) = pycs.tdc.metrics.combigauss(subtds, subtderrs, truetds, lensmodelsigma)
+	
+	print probazero
 	# That's what it does:
 	#sigma_combi = 1.0 / np.sqrt(np.sum(1.0 / (sigmas**2)))
 	#center_combi = sigma_combi**2 * np.sum( centers/sigmas**2 )
