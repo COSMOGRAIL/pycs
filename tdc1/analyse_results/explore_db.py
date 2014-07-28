@@ -67,12 +67,12 @@ print 'Amod=',pycs.tdc.metrics.getAmod(db_r0,method)
 
 ### Play with db values ###
 
-methods = ["pycs_tdc1_spl-vanilla-doupla-full","pycs_tdc1_sdi-vanilla-doupla-full","pycs_tdc1_d3cs-vanilla-doupla-full"]
+#methods = ["pycs_tdc1_spl-vanilla-doupla-full","pycs_tdc1_sdi-vanilla-doupla-full","pycs_tdc1_d3cs-vanilla-doupla-full"]
 #methods = ["pycs_tdc1_spl-vanilla-dou-full","pycs_tdc1_spl-vanilla-dou-P3percent","pycs_tdc1_spl-vanilla-dou-800bestP","pycs_tdc1_spl-vanilla-dou-100bestP"]
 #methods = ["pycs_tdc1_spl-vanilla-doupla-full","pycs_tdc1_spl-vanilla-doupla-P3percent","pycs_tdc1_spl-vanilla-doupla-1600bestP","pycs_tdc1_spl-vanilla-doupla-800bestP","pycs_tdc1_spl-vanilla-doupla-100bestP"]
 #methods = ["pycs_tdc1_spl-vanilla-doupla-1600bestP","pycs_tdc1_spl-vanilla-doupla-800bestP"]
 
-#methods = ["pycs_tdc1_spl-vanilla-dou-full","pycs_tdc1_sdi-vanilla-dou-full","pycs_tdc1_d3cs-vanilla-dou-full"]
+methods = ["pycs_tdc1_spl-vanilla-dou-full","pycs_tdc1_sdi-vanilla-dou-full","pycs_tdc1_d3cs-vanilla-dou-full"]
 #pycs.tdc.metrics.Pplotall(db,methods=methods,N=len(db))
 pycs.tdc.metrics.Pplotcombi(db,methods=methods,N=len(db),lensmodelsigma=0.0)
 
