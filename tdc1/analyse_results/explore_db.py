@@ -5,14 +5,16 @@ import pycs
 
 
 
+# load database...
+
 db = pycs.gen.util.readpickle('db.pkl').values()
 db = [item for item in db if item["in_tdc1"] == 1]
 
-"""
-method = "pycs_tdc1_spl-vanilla-doupla-800bestP"
 
+"""
 ### Check the distribution of individuals chi2,P,... ###
 
+method = "pycs_tdc1_spl-vanilla-doupla-800bestP"
 dbmeth = [item for item in db if "%s_td" % method in item]
 chi2s = [item["%s_chi2" % method] for item in dbmeth]
 As = [item["%s_A" % method] for item in dbmeth]
@@ -62,12 +64,15 @@ print 'P=',pycs.tdc.metrics.getP(db_r0,method)
 print 'A=',pycs.tdc.metrics.getA(db_r0,method)
 print 'Amod=',pycs.tdc.metrics.getAmod(db_r0,method)
 """
-methods = ["pycs_tdc1_spl-vanilla-dou-full","pycs_tdc1_sdi-vanilla-dou-full","pycs_tdc1_d3cs-vanilla-dou-full"]
-#methods = ["pycs_tdc1_spl-vanilla-doupla-full","pycs_tdc1_sdi-vanilla-doupla-full","pycs_tdc1_d3cs-vanilla-doupla-full"]
 
+### Play with db values ###
+
+#methods = ["pycs_tdc1_spl-vanilla-doupla-full","pycs_tdc1_sdi-vanilla-doupla-full","pycs_tdc1_d3cs-vanilla-doupla-full"]
 #methods = ["pycs_tdc1_spl-vanilla-dou-full","pycs_tdc1_spl-vanilla-dou-P3percent","pycs_tdc1_spl-vanilla-dou-800bestP","pycs_tdc1_spl-vanilla-dou-100bestP"]
 #methods = ["pycs_tdc1_spl-vanilla-doupla-full","pycs_tdc1_spl-vanilla-doupla-P3percent","pycs_tdc1_spl-vanilla-doupla-1600bestP","pycs_tdc1_spl-vanilla-doupla-800bestP","pycs_tdc1_spl-vanilla-doupla-100bestP"]
 #methods = ["pycs_tdc1_spl-vanilla-doupla-1600bestP","pycs_tdc1_spl-vanilla-doupla-800bestP"]
-pycs.tdc.metrics.Pplotall(db,methods=methods,N=len(db))
 
+methods = ["pycs_tdc1_spl-vanilla-dou-full","pycs_tdc1_sdi-vanilla-dou-full","pycs_tdc1_d3cs-vanilla-dou-full"]
+#pycs.tdc.metrics.Pplotall(db,methods=methods,N=len(db))
+pycs.tdc.metrics.Pplotcombi(db,methods=methods,N=len(db),lensmodelsigma=0.0)
 
