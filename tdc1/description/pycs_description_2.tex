@@ -1,0 +1,199 @@
+\documentclass[traditabstract]{aa}
+
+\usepackage{graphicx}
+\usepackage{txfonts}
+\usepackage{natbib}
+\usepackage{xspace}
+\usepackage{url}
+\bibpunct{(}{)}{;}{a}{}{,}
+
+\begin{document}
+
+\title{PyCS time delay measurement on TDC1}
+\author{ In alphabetical order:
+V. Bonvin\inst{\ref{epfl}} \and
+F. Courbin\inst{\ref{epfl}} \and
+M. Tewes\inst{\ref{bonn}}
+}
+
+\institute{
+Laboratoire d'astrophysique, Ecole Polytechnique F\'ed\'erale de Lausanne (EPFL), Observatoire de Sauverny, 1290 Versoix, Switzerland \label{epfl}
+\and
+Argelander-Institut f\"ur Astronomie, Auf dem H\"ugel 71, D-53121 Bonn, Germany \label{bonn}
+}
+
+\date{\today}
+%\abstract{}
+
+\maketitle
+
+
+% -Authors and affiliations
+% -Description of your method(s)
+% -Description of internal testing and/or references to prior applications of the method
+% -A description of the strategy you have used to identify catastrophic failures
+%We realize there is not a lot of time between now and the deadline, but it is important that this paragraph of text be written blind as well. Please keep it short! This is only meant to be a brief summary for each team. We encourage you to write up your method separately if you wish so.
+
+\section{PyCS method descriptions}
+
+
+
+
+The PyCS team has made submissions using three time delay measurement
+methods: {\tt d3cs}, {\tt spl}, and {\tt sdi}. The latter two build
+upon initial estimations provided by the former. The following subsections
+summarize each of the three methods.
+
+\subsubsection{{\tt d3cs}: D3 curve shifting}
+
+This first method is based on human inspection of the light curves, in
+the spirit of citizen science projects. The PyCS team has developed a dedicated
+browser-based visualization interface, using the D3.js JavaScript
+library\footnote{Data-Driven Documents, \url{http://www.d3js.org/}} by
+\citet{d3}. The tool is now publicly available
+online\footnote{\url{http://www.astro.uni-bonn.de/~mtewes/d3cs/tdc1/}
+(See ``Read me first'' for help)} 
+
+%[Note: not sure if you/we want to
+%leave this URL in the TDC paper, but feel free to explore andregister
+%estimates!].
+
+The main motivations behind this time-consuming yet simple
+approach were to obtain, for each light curve pair, (1) a rough
+initial estimate for the time delay and associated uncertainty, and
+(2) a robust characterization of the confidence that this estimate is
+not a catastrophic error. 
+%Our interface allows users to interactively
+%shift the light curves in time, magnitude, and flux, and to zoom in on
+%interesting sections of the data. It enables visual estimation of both
+%the time delay and an associated uncertainty. 
+As part of the inspection, the interface asks the user to pick a
+confidence category for the proposed solution, among four choices:
+
+
+\begin{enumerate}
+\item ``doubtless'' if a catastrophic error can be virtually excluded,
+\item ``plausible'' if the solution yields a good fit and no other solutions are seen,
+\item ``multimodal'' if the proposed solution is only one among two or more possible solutions,
+\item ``uninformative'' if the data does not reveal any delay.
+\end{enumerate}
+
+At least two human estimates were obtained for each pair of curves.
+%Only a small circle of scientists has participated to the visual
+%inspection of TDC1, yet we obtained at least two estimates by
+%different people for each pair of curves. Different users have taken
+%significantly different typical amount of time to register their
+%estimates, from $\approx 25$ seconds per pair for ``fast'' users (vb) to $>
+%60$ seconds per pair for ``slow'' users (mt). 
+
+%Submissions using raw estimates from such different users are included
+%in our blind submission set {\bf PLEASE DESCRIBE BRIEFLY THE
+%DIFFERENCES BETWEEN SUBMISSIONS}. 
+
+The database of {\tt d3cs}
+estimates was then carefully reduced to a single estimate per pair,
+resolving any conflicts between estimates in a conservative way. A key
+result of this step is a sample of 1628 ``doubtless'' time-delay
+estimates, which, as this team hopes, is free from any catastrophic
+outliers. Through this experiment, we have demonstrated that such an
+approach remains tractable for about 5000 light curves, with typical
+human inspection times of a minute per light curve pair and user.
+
+\subsubsection{{\tt spl}: free-knot spline fit}
+
+The {\tt spl} method is a simplified version of the ``free-knot spline
+technique'' described by \citet{pycs} and implemented in the PyCS
+software package. Using the {\tt d3cs} estimate as the starting point, the
+method simultaneously fits one single spline representing the
+intrinsic QSO variability and a smoother ``extrinsic'' spline
+representing the differential microlensing variability to the light
+curves. During this iterative process, the curves are shifted in time
+so as to optimize the fit. This fit is repeated 20 times, starting form
+different initial conditions, to test and improve the robustness of
+the resulting delay against local minima of the $\chi^2$
+hypersurface. Such a model fit is then used to generate 40 simulated
+noisy light curves with a range of true time delays around the
+best-fit solution. By re-running the spline fit on these simulated
+curves, and comparing the resulting delays with the true input time
+delays, the delay measurement uncertainty is estimated.
+
+The {\tt spl} method for TDC1 is simpler, faster, and significantly
+less conservative in the uncertainty estimation than the free-knot
+spline technique as applied to COSMOGRAIL
+data\footnote{\url{http://www.cosmograil.org}} by \citet{Tewes:2013iz}
+and \citet{RathnaKumar:2013eu}. In particular, the temporal density of spline
+knots is automatically determined from signal-to-noise ratios measured on
+the two light curves, and only white noise is used in the generative model.
+%\begin{enumerate}
+%\item The temporal density of spline knots controlling the flexibility of the intrinsic spline is set automatically from the signal-to-noise ratios measured on the two light curves, using an empirical calibration. 
+%These signal-to-noise ratios compare the typical amplitude of variability observed in a window of 50 to 75 days with the ``scatter'', the typical variability from one epoch to the next. For the extrinsic spline, the knot density is fixed to be the same for all TDC1 pairs.
+%\item Fast microlensing noise is neglected. Only plain white noise is added to the generative model.
+%\item Only the r.m.s. error of these delay measurements from simulated light curves is used as total uncertainty estimate.
+%\item Finally, no manual fine-tuning of parameters or correction for problematic model fits was implemented.
+%\end{enumerate}
+These simplifications remove any form of ``safety margin'' from the
+free-knot spline technique that are adopted when applying to real
+datasets. Thus it is expected that the resulting TDC1 error estimates
+be rather optimistic. The entire {\tt spl} analysis takes about 5
+CPU-minutes for an average TDC1 pair.
+
+\subsubsection{{\tt sdi}}
+
+Our third method, {\tt sdi} (for spline difference) is inspired by the
+``regression difference technique'' of \citet{pycs}, replacing the
+Gaussian process regressions by spline fits, to speed up the
+analysis. The method fits a different spline to each of the two light
+curves, and then minimizes the variability of the difference between
+these two splines by shifting them in time with respect to each
+other. The advantage of this approach is that it does not require an
+explicit microlensing model. To estimate the uncertainty, this method
+uses the simulated light curves provided by the {\tt spl}
+technique. As for the {\tt spl} technique, the estimates from {\tt
+d3cs} are used as the starting point to define the time delay
+intervals in which {\tt sdi} optimizes its cost function. 
+% A small
+%number of {\tt spl} and {\tt sdi} measurements that do not lie within
+%1.5$\sigma$ of the corresponding {\tt d3cs} estimates was discarded.
+
+\subsubsection{Identification of catastrophic failures}
+
+To prevent catastrophic failures, this team relied solely on the {\tt
+d3cs} ``doubtless'' sample. The {\tt spl} and {\tt sdi} methods do not
+affect this confidence classification. Furthermore, a small number of
+{\tt spl} and {\tt sdi} measurements that do not lie within 1.5$\sigma$
+of the corresponding {\tt d3cs} estimates was rejected.
+
+\subsubsection{Differences between submissions}
+
+For all three methods, the submissions are named following the
+scheme {\tt pycs\_tdc1\_A-B-C-D.dt}, where
+\begin{description}
+\item[A] is the method, {\tt d3cs}, {\tt spl} or {\tt sdi},
+\item[B] gives method parameters, with {\tt vanilla} denoting the \emph{a priori} best option,
+\item[C] is the confidence category, with {\tt dou} for doubtless and {\tt doupla} for both doubtless and plausible light curve pairs. The {\tt doupla} submissions are expected to be contaminated by some catastrophic outliers, but feature more than twice the number of time delays than the {\tt dou} sample.
+\item[D] designates filters that select systems according to different criteria, mostly based on the
+``blind'' relative precision $\sigma_i / |\widetilde{\Delta t_i}|$. The code {\tt full} corresponds to no filter. {\tt 100bestP} selects the 100 ``best'' systems in terms of blind relative precision, \emph{mixing all rungs}. In a similar way, {\tt P3percent} selects the best systems, again mixing all rungs, to obtain a $P$ metric of approximately 3\% for the selected sample. {\tt 100largestabstd} is the selection of the 100 largest delays across all rungs.
+\end{description}
+Submissions that share the same method and method parameters (A and B) differ only in the selection of systems, and not in the numerical values of the estimates.
+
+
+
+
+
+
+
+
+
+\begin{acknowledgements}
+VB and FC are supported by the Swiss National Science Foundation (SNSF). MT acknowledges support by the DFG grant Hi 1495/2-1.
+\end{acknowledgements}
+
+
+
+\bibliographystyle{aa}
+\bibliography{pycs_description}
+
+\end{document}
+
+
+
