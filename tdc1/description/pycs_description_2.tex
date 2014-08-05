@@ -169,7 +169,7 @@ For all three methods, the submissions are named following the
 scheme {\tt pycs\_tdc1\_A-B-C-D.dt}, where
 \begin{description}
 \item[A] is the method, {\tt d3cs}, {\tt spl} or {\tt sdi},
-\item[B] gives method parameters, with {\tt vanilla} denoting the \emph{a priori} best option,
+\item[B] gives method parameters, with {\tt vanilla} denoting the \emph{a priori} best or simplest option,
 \item[C] is the confidence category, with {\tt dou} for doubtless and {\tt doupla} for both doubtless and plausible light curve pairs. The {\tt doupla} submissions are expected to be contaminated by some catastrophic outliers, but feature more than twice the number of time delays than the {\tt dou} sample.
 \item[D] designates filters that select systems according to different criteria, mostly based on the
 ``blind'' relative precision $\sigma_i / |\widetilde{\Delta t_i}|$. The code {\tt full} corresponds to no filter. {\tt 100bestP} selects the 100 ``best'' systems in terms of blind relative precision, \emph{mixing all rungs}. In a similar way, {\tt P3percent} selects the best systems, again mixing all rungs, to obtain a $P$ metric of approximately 3\% for the selected sample. {\tt 100largestabstd} is the selection of the 100 largest delays across all rungs.
