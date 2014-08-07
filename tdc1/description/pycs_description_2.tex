@@ -167,13 +167,13 @@ of the corresponding {\tt d3cs} estimates were rejected.
 \subsubsection{Differences between submissions}
 
 For all three methods, the submissions are named following the
-scheme {\tt pycs_tdc1_A-B-C-D.dt}, where
+scheme {\tt pycs\_tdc1\_A-B-C-D.dt}, where
 \begin{description}
 \item[A] gives the method, {\tt d3cs}, {\tt spl} or {\tt sdi}.
 \item[B] gives the method parameters, with {\tt vanilla} denoting the \emph{a priori} best or simplest.
 \item[C] gives the confidence category, with {\tt dou} for doubtless and {\tt doupla} for both doubtless and plausible light curve pairs. The {\tt doupla} submissions are expected to be contaminated by some catastrophic outliers, but feature more than twice the number of time delays than the {\tt dou} sample.
 \item[D] gives the filter that select systems according to different criteria across all rungs, mostly based on the
-blind relative precision $\sigma_i / |\widetilde{\Delta t_i}|$. The code {\tt full} corresponds to no filter. {\tt XXXbestP} selects the XXX ``best'' systems in terms of blind relative precision, {\tt P3percent} selects the largest number of systems so that the average blind relative precisions is approximately 3\%, and {\tt 100largestabstd} is the selection of the 100 largest delays.
+blind relative precision $\sigma_i / |\widetilde{\Delta t_i}|$. The code {\tt full} corresponds to no filter. {\tt XXXbestP} selects the XXX ``best'' systems in terms of blind relative precision, {\tt P3percent} selects the largest number of systems so that the average blind relative precision is approximately 3\%, and {\tt 100largestabstd} is the selection of the 100 largest delays.
 \end{description}
 
 Submissions that share the same method and method parameters (A and B) differ only in the selection of systems, and not in the numerical values of the estimates. They can thus be seen as subsamples of the A-B-dou/doupla-full submissions.
