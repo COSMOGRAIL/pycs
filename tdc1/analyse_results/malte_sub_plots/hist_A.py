@@ -35,7 +35,7 @@ def subhist(db, subname, subi):
 	
 	a = np.mean(aterms)
 
-	bla = plt.hist(aterms, log=True, bins=40, range=(-range, range), histtype="step", color=colors[subi], label="%s: $A$ = %.5f" % (subname, a))
+	bla = plt.hist(aterms, log=True, bins=40, range=(-range, range), histtype="step", color=colors[subi], label="%s: $A$ = %.5f" % (subname, a), lw=1.5)
 	plt.axvline(a, color = colors[subi], lw=1, ls="--")
 	
 	#plt.hist(submtdreloffs, bins=75, range=(-range, range), normed=True, histtype="step", label="%s: $\\chi^2$ = %.3f" % (subname, chi2))

@@ -29,7 +29,7 @@ def subhist(db, subname, subi):
 
 	chi2 = np.sum(submtdreloffs**2) / len(seldb) 
 
-	plt.hist(submtdreloffs, bins=75, range=(-range, range), normed=True, histtype="step", color=colors[subi], label="%s: $\\chi^2$ = %.3f" % (subname, chi2), lw=1.5)
+	plt.hist(submtdreloffs, bins=75, range=(-range, range), normed=False, histtype="step", color=colors[subi], label="%s: $\\chi^2$ = %.3f" % (subname, chi2), lw=1.5)
 
 
 fig = plt.figure(figsize=(10, 10))
@@ -40,13 +40,17 @@ subnames = ["pycs_tdc1_d3cs-vanilla-dou-full", "pycs_tdc1_spl-vanilla-dou-full",
 for subi, subname in enumerate(subnames):
 	subhist(db, subname, subi)
 
-x = np.linspace(-range, range, 1000)
-plt.plot(x, norm.pdf(x, 0.0, 1.0), color="black", label="Standard normal distribution")
+#x = np.linspace(-range, range, 1000)
+#plt.plot(x, norm.pdf(x, 0.0, 1.0), color="black", label="Standard normal distribution")
+
+ax1 = plt.gca()
+ax1.set_yscale('log', nonposy='clip')
+plt.ylim(0.5, 500)
+
 
 #plt.title("All rungs")
 plt.xlabel(r"$\frac{\widetilde{\Delta t_i} - \Delta t_i}{\sigma_i}$", fontsize=26)
 plt.xlim(-range, range)
-plt.ylim(0.0, 1.8)
 plt.legend()
 plt.show()
 #plt.savefig("hist_chi2.pdf")
