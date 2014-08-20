@@ -8,15 +8,48 @@ from scipy.stats import norm
 db = pycs.gen.util.readpickle("../db.pkl").values()
 db = [item for item in db if item["in_tdc1"] == 1] # No need for the other ones
 
-print len(db)
-
 alltruetds = np.array([item["truetd"] for item in db])
 
 subdb = [item for item in db if abs(item["truetd"]) > 10.0]
 
 truetds = np.array([item["truetd"] for item in subdb])
 
-print len(truetds), len(alltruetds)
+#print len(truetds), len(alltruetds)
+
+submission = "pycs_tdc1_spl-vanilla-doupla-full"
+#submission = "pycs_tdc1_d3cs-vanilla-dou-full"
+#submission = "pycs_tdc1_sdi-vanilla-doupla-full"
+
+print submission
+
+seldb = [item for item in db if submission + "_td" in item]
+
+print "f_all = ", float(len(seldb))/len(db)
+
+seldb = [item for item in subdb if submission + "_td" in item]
+
+print "f_above10 = ", float(len(seldb))/len(subdb)
+
+print "Number of systems above 10", float(len(seldb))
+
+# Now we sort this according to error
+
+for item in seldb:
+	item["error"] = abs(item[submission + "_td"] - item["truetd"])
+	item["errorinsigma"] = item["error"]/item[submission + "_tderr"]
+
+
+print "Worst, by absolute error:"
+sortedseldb = sorted(seldb, key=lambda k: k['error'], reverse=True) 
+for item in sortedseldb[:30]:
+	print "%15s, %8.2f, %8.2f, %8.2f" % (item["id"], item["truetd"], item["errorinsigma"], item["error"])
+
+print "Worst, by absolute error in sigma:"
+sortedseldb = sorted(seldb, key=lambda k: k['errorinsigma'], reverse=True) 
+for item in sortedseldb[:30]:
+	print "%15s, %8.2f, %8.2f, %8.2f" % (item["id"], item["truetd"], item["errorinsigma"], item["error"])
+
+
 
 exit()
 
