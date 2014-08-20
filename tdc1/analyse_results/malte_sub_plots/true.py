@@ -7,7 +7,18 @@ from scipy.stats import norm
 
 db = pycs.gen.util.readpickle("../db.pkl").values()
 db = [item for item in db if item["in_tdc1"] == 1] # No need for the other ones
-db = [item for item in db if abs(item["truetd"]) > 10.0]
+
+print len(db)
+
+alltruetds = np.array([item["truetd"] for item in db])
+
+subdb = [item for item in db if abs(item["truetd"]) > 10.0]
+
+truetds = np.array([item["truetd"] for item in subdb])
+
+print len(truetds), len(alltruetds)
+
+exit()
 
 
 #db = [item for item in db if item["rung"] == 0]

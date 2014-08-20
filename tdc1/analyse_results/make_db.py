@@ -14,7 +14,7 @@ To add:
 	- Stats from joined.py (overlap ?)	
 """
 
-execfile('../config.py')
+#execfile('../config.py')
 
 
 ##############	Initialization ##############
@@ -59,8 +59,9 @@ for rung in range(5):
 		db[pairid]["truetd"] = -1.0* float(truth[index].split(' ')[-1]) # Do NOT forget the "-" sign to match pycs standards
 
 		# Pairs such that truetd < 10 are discarded for the analysis
-		if abs(db[pairid]["truetd"]) <10.0:
-			db[pairid]["in_tdc1"] = 0 
+		# WTF ? Using "in_tdc1" for this is a border effect TO BE AVOIDED...
+		#if abs(db[pairid]["truetd"]) <10.0:
+		#	db[pairid]["in_tdc1"] = 0 
 		
 ##############   Add pycs submissions values  ##############
 
@@ -112,7 +113,7 @@ def addusers(db, username):
 	# read the d3cs database:
 	
 	pairs = pycs.tdc.util.listtdc1v2pairs()
-	iniests = pycs.tdc.est.importfromd3cs(d3cslogpath)
+	iniests = pycs.tdc.est.importfromd3cs("../d3cs_logs/2014-06-07.txt")
 	iniests = pycs.tdc.est.select(iniests, pairs= pairs)
 	
 	estimates = [est for est in iniests if est.methodpar == username]
