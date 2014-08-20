@@ -1,0 +1,35 @@
+\documentclass[traditabstract]{aa}
+
+\usepackage{graphicx}
+\usepackage{txfonts}
+\usepackage{natbib}
+\usepackage{xspace}
+\usepackage{url}
+\bibpunct{(}{)}{;}{a}{}{,}
+
+\begin{document}
+
+
+\subsection{PyCS {\tt d3cs}, {\tt spl} and {\tt sdi}}
+
+The visual {\tt d3cs} classification of the light-curve pairs into different confidence categories proved valuable. The resulting PyCS ``doubtless'' ({\tt dou}) submissions ($f=0.31$, averaging accross all rungs) are free from any catastrophic outliers, with, for the vanilla {\tt spl} method, no point estimate beeing farther than $3.7 \sigma_i$ or $12.0$ days from the truth. For this same method, the less pure {\tt doupla} submission ($f=0.65$) is contaminated by $1.0\%$ ($0.8 \%$) of delays that are off by more than 20 days ($5 \sigma_i$, respectively). The purely visual {\tt d3cs} 1-$\sigma$ uncertainties were, as could be expected, too large by a factor 3 to 4. Regarding the accuracy, the {\tt d3cs} estimates for time delays shorter than $< 50$ days are systematically biased short, leading to a significant overall $A$ of $\approx -0.03$. We speculate that this bias is due to users favoring delays that yield larger overlap between the light curves. The {\tt spl} and {\tt sdi} techniques were not influenced by this bias in their initial conditions, and both reached very high accuracy. For these numerical techniques, the $\chi^2$ metrics are very close to $0.5$ and $1.0$, respectively. The simplifications implemented into these methods with respect to their from \citet{pycs}
+
+
+
+
+
+%R
+
+
+
+%… times smaller uncertainties would have led to a chi2 of 1.0 - Only for small time delays (< 40), D3CS estimates are systematically biased short, leading to a significant A of $-0.03$. We do not find any bug in the D3CS vizualisation tool which could explain this biase, and we speculate that it might be due to CHECK FOR DIFFERENT USERS ! The spl and sdi techniques were not influenced by this bias in their initial conditions, and reached high accuracy results.
+
+
+
+\bibliographystyle{aa}
+\bibliography{pycs_description}
+
+\end{document}
+
+
+
