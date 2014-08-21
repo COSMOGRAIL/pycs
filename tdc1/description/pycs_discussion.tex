@@ -12,29 +12,19 @@
 
 \subsection{PyCS {\tt d3cs}, {\tt spl} and {\tt sdi}}
 
-The human-made {\tt d3cs} classification of the light-curve pairs into different confidence categories proved valuable. All the resulting ``doubtless'' ({\tt dou}) submissions ($f=0.31$, averaging accross all rungs) are free from any catastrophic outliers. As an example, none of the point estimates from the vanilla {\tt spl} method is farther than $3.7 \sigma_i$ or $12.0$ days from the truth. For this same method, the less pure {\tt doupla} submission ($f=0.65$) is contaminated by $1.0\%$ of delays that are off by more than 20 days or $5 \sigma_i$. Interestingly, the {\tt d3cs} estimates for time delays shorter than 50 days are systematically biased low, leading to a significant overall $A$ of approximatively $-0.03$ for {\tt d3cs}. We speculate that this bias is perceptual and due to users favoring a larger overlap of the light curves. The {\tt sdi} and {\tt spl} techniques were not influenced by this bias in their initial conditions, and both reached a very high accuracy, consistent with being unbiased. For these two numerical techniques, the $\chi^2$ are close to unity, suggesting adequate to slightly over-estimated delay uncertainties. The implemented simplifications to the original techniques from \citet{pycs} seem therefore  acceptable for the level of complexity present in the TDC1 data.
+The human-made {\tt d3cs} classification of the light-curve pairs into different confidence categories proved valuable. All the resulting ``doubtless'' ({\tt dou}) submissions ($f=0.31$, averaging accross all rungs) are free from any catastrophic outliers. As an example, none of the point estimates from the vanilla {\tt spl} method is farther than $3.7 \sigma_i$ or $12.0$ days from the truth. For this same method, the less pure {\tt doupla} submission ($f=0.65$) is contaminated by $1.0\%$ of delays that are off by more than 20 days or $5 \sigma_i$. Interestingly, the {\tt d3cs} estimates for time delays shorter than 50 days are systematically biased low, leading to a significant overall $A$ of approximatively $-0.03$ for {\tt d3cs}. We speculate that this bias is perceptual and due to users favoring a larger overlap of the light curves. The {\tt sdi} and {\tt spl} techniques were not influenced by this bias in their initial conditions, and both reached a high accuracy, consistent with being unbiased. For these two numerical techniques, the $\chi^2$ are close to unity, suggesting adequate to slightly over-estimated delay uncertainties. The implemented simplifications to the original techniques from \citet{pycs} seem therefore  acceptable for the level of complexity present in the TDC1 data.
 
 
 
 %The implemented simplifications with respect to the original techniques from \citet{pycs} are adequate for the TDC data.
 
-
 %The {\tt d3cs} 1-$\sigma$ uncertainties were, not surprisingly, overestimated by a factor of about 3. 
 
 %1.0 $0.5$ and $1.0$, respectively. [To be formulated / written :] The simplifications implemented into these methods with respect to their ancestors from \citet{pycs} are therefore OK for these simulated TDC stuff. However we still think that orignial PyCS is safer for real light curves.
 
-
-
-
 %For this same method, the less pure {\tt doupla} submission ($f=0.65$) is contaminated by $1.0\%$ ($0.8 \%$) of delays that are off by more than 20 days ($5 \sigma_i$, respectively). 
 
-
-%R
-
-
-
 %… times smaller uncertainties would have led to a chi2 of 1.0 - Only for small time delays (< 40), D3CS estimates are systematically biased short, leading to a significant A of $-0.03$. We do not find any bug in the D3CS vizualisation tool which could explain this biase, and we speculate that it might be due to CHECK FOR DIFFERENT USERS ! The spl and sdi techniques were not influenced by this bias in their initial conditions, and reached high accuracy results.
-
 
 
 \bibliographystyle{aa}
