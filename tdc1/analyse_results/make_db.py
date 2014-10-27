@@ -14,7 +14,7 @@ To add:
 	- Stats from joined.py (overlap ?)	
 """
 
-#execfile('../config.py')
+execfile('../config.py')
 
 
 ##############	Initialization ##############
@@ -59,9 +59,8 @@ for rung in range(5):
 		db[pairid]["truetd"] = -1.0* float(truth[index].split(' ')[-1]) # Do NOT forget the "-" sign to match pycs standards
 
 		# Pairs such that truetd < 10 are discarded for the analysis
-		# WTF ? Using "in_tdc1" for this is a border effect TO BE AVOIDED...
-		#if abs(db[pairid]["truetd"]) <10.0:
-		#	db[pairid]["in_tdc1"] = 0 
+		if abs(db[pairid]["truetd"]) <10.0:
+			db[pairid]["in_tdc1"] = 0 
 		
 ##############   Add pycs submissions values  ##############
 
@@ -85,8 +84,8 @@ def addsubmission(db, subpath):
 		db[info[0]]["%s_P" % subname]		= abs(info[2]/db[info[0]]["truetd"])
 		
 		# A and Amod (remove absolute value in the denominator should be sufficient...)
-		db[info[0]]["%s_A" % subname]		= (info[1]-db[info[0]]["truetd"])/abs(db[info[0]]["truetd"])
-		db[info[0]]["%s_Amod" % subname]	= (info[1]-db[info[0]]["truetd"])/db[info[0]]["truetd"] 
+		db[info[0]]["%s_Amod" % subname]		= (info[1]-db[info[0]]["truetd"])/abs(db[info[0]]["truetd"])
+		db[info[0]]["%s_A" % subname]	= (info[1]-db[info[0]]["truetd"])/db[info[0]]["truetd"] 
 		
 		# chi2
 		db[info[0]]["%s_chi2" % subname]	= ((info[1]-db[info[0]]["truetd"])/info[2])**2		
@@ -113,7 +112,7 @@ def addusers(db, username):
 	# read the d3cs database:
 	
 	pairs = pycs.tdc.util.listtdc1v2pairs()
-	iniests = pycs.tdc.est.importfromd3cs("../d3cs_logs/2014-06-07.txt")
+	iniests = pycs.tdc.est.importfromd3cs(d3cslogpath)
 	iniests = pycs.tdc.est.select(iniests, pairs= pairs)
 	
 	estimates = [est for est in iniests if est.methodpar == username]
