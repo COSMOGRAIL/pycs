@@ -191,7 +191,7 @@ def getresidual_singleshift(lcs,spline,timeshift,magshift,minoverlap=3,display=F
 	return sumresidual
 	
 
-def getresidual_perseasons(lcs,spline,timeshift,magsteps,minoverlap=3,display=False,workdir="."):
+def getresidual_perseasons(lcs,spline,timeshift,magsteps,mode,minoverlap=3,display=False,workdir="."):
 	"""
 	lcs[0] is the one used for spline fitting
 	lcs[1] is the one on which we want to compute residuals
@@ -257,13 +257,26 @@ def getresidual_perseasons(lcs,spline,timeshift,magsteps,minoverlap=3,display=Fa
 		#sys.exit()
 	
 	# seasonsresults is a list, each element refers to one season, and contain the best magshift and corresponding residuals
-	overallresidual = sum([seasonsresult[1] for seasonsresult in seasonsresults])
-	stdmag = np.std([seasonsresult[0] for seasonsresult in seasonsresults]) # compute std of the magshifts per seasons. Can be useful to characterise ML intensity...
-	
-	return overallresidual,stdmag
+	if mode == "sum":
+		# return the sum of the best residuals for each season
+		overallresidual = np.sum(sorted([seasonsresult[1] for seasonsresult in seasonsresults])[:])
+		stdmag = np.std([seasonsresult[0] for seasonsresult in seasonsresults]) # compute std of the magshifts per seasons. Can be useful to characterise ML intensity...
+		return overallresidual,stdmag
+		
+	if mode == "median":
+		# return the median of the best residuals for each season
+		overallresidual = np.median(sorted([seasonsresult[1] for seasonsresult in seasonsresults])[:])
+		stdmag = np.std([seasonsresult[0] for seasonsresult in seasonsresults]) # compute std of the magshifts per seasons. Can be useful to characterise ML intensity...
+		return overallresidual,stdmag		
 		
 
-def getresiduals(lcs,spline,magsteps,mytimesteps,resmode,minoverlap=10,workdir=".",display=False):
+	if mode == "individual":
+		# Do not sum here
+		return seasonsresults
+		
+
+def getresiduals(lcs,spline,magsteps,mytimesteps,resmode,mode="sum",minoverlap=10,workdir=".",display=False):
+
 	"""
 	Main function here:
 	Now, let's compute the residuals - loop on getresidual_singleshift
@@ -281,31 +294,52 @@ def getresiduals(lcs,spline,magsteps,mytimesteps,resmode,minoverlap=10,workdir="
 				residuals.append(entry)
 
 
-	
+		pycs.gen.util.writepickle(residuals,"%s/resids_%s.pkl" %(workdir,resmode))
+		
 	elif resmode == "perseasons":
-		residuals = []
-		for timestep in mytimesteps:
-			entry={}
-			entry["timeshift"] = timestep
-			res,stdmag = getresidual_perseasons(lcs,spline,timeshift=timestep,magsteps=magsteps,minoverlap=minoverlap,display=display,workdir=workdir)
-			entry["medres"] = res
-			entry["stdmag"] = stdmag 
-			residuals.append(entry)
-			
+	
+		if mode == "sum" or mode == "median":
+			residuals = []
+			for timestep in mytimesteps:
+				entry={}
+				entry["timeshift"] = timestep
+				res,stdmag = getresidual_perseasons(lcs,spline,timeshift=timestep,magsteps=magsteps,mode=mode,minoverlap=minoverlap,display=display,workdir=workdir)
+				entry["medres"] = res
+				entry["stdmag"] = stdmag 
+				residuals.append(entry)
+				
+		elif mode == "individual":		
+			residuals = []
+			for timestep in mytimesteps:
+				entry={}
+				entry["timeshift"] = timestep
+				seasonsresults = getresidual_perseasons(lcs,spline,timeshift=timestep,magsteps=magsteps,mode=mode,minoverlap=minoverlap,display=display,workdir=workdir)
+				for ind,seasonsresult in enumerate(seasonsresults):
+					entry["s%i_medres"%int(ind+1)] = seasonsresult[1]
+					entry["s%i_mag"%int(ind+1)] = seasonsresult[0]				
+				residuals.append(entry)
+		else:
+			print "Hey, give me a correct mode! I do not know %s" %mode
+			sys.exit()
+						
+		pycs.gen.util.writepickle(residuals,"%s/resids_%s_%s.pkl" %(workdir,resmode,mode))
+		
+					
 	else:
 		print "Hey, give me a correct resmode! I do not know %s" %resmode
 		sys.exit()
 	
-				
-	pycs.gen.util.writepickle(residuals,"%s/resids_%s.pkl" %(workdir,resmode))
 	return residuals
+	
+	
+	
 #########################################################
 ###   PLOT RESULTS
 #########################################################
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 
-def displaycrudeopt(rung,pair,residuals,timesteps,magsteps,resmode,workdir=".",savefig=False):
+def displaycrudeopt(rung,pair,residuals,timesteps,magsteps,resmode,mode="sum",workdir=".",savefig=False):
 	
 	"""
 	Display the residuals
@@ -358,13 +392,14 @@ def displaycrudeopt(rung,pair,residuals,timesteps,magsteps,resmode,workdir=".",s
 		plt.plot([truedelay,truedelay],[min(mags),max(mags)],'--',c='white',linewidth=2.5)
 		plt.scatter(timemin,magmin,s=80,c='cyan')
 		if savefig==True:
-			plt.savefig("%s/plot_res.png" %(workdir))
+			plt.savefig("%s/plot_res_%s.png" %(workdir,resmode))
 			plt.close()
 		else:	
 			plt.show()
 			
 	elif resmode == 'perseasons':
-				
+		
+	
 		# Get the true time delay from truth.txt
 		lines = open('../analyse_results/truth.txt').readlines()
 		lines = [line.split() for line in lines]
@@ -374,35 +409,83 @@ def displaycrudeopt(rung,pair,residuals,timesteps,magsteps,resmode,workdir=".",s
 			if line[0] == filename:
 				truedelay = float(line[1])*(-1.0)
 				
-
-		# Collect the values from residuals
-		times     = []
-		stdmags   = []
-		resids    = []
-		for residual in residuals:
-			if residual["medres"] < 100:
-				times.append(residual["timeshift"])
-				stdmags.append(residual["stdmag"])
-				resids.append(residual["medres"])
-
-		
-		# Get the best value from residuals
-		# WARNING : Dangerous to proceed like this ! Use dict sort instead !!!!
-		minindex = resids.index(min(resids))
-		timemin = times[minindex]
-		
-		resids = np.log10(resids)
 		plt.figure()
-		plt.suptitle(filename)
-		sc = plt.scatter(times,resids,s=50,c=stdmags)
-		plt.plot(times,resids,'k--')
-		plt.plot([truedelay,truedelay],[min(resids),max(resids)],'--',c='green',linewidth=2.5)		
+		plt.suptitle(filename)		
 		plt.xlabel('B Time Shift [days]')
-		plt.ylabel('log10 Absolute average residuals')
-		plt.colorbar(sc)
-		plt.scatter(timemin,min(resids),s=160,c='grey',marker="d")		
+		plt.ylabel('log10 Absolute average residuals')		
+		
+		
+		if mode == "sum" or mode == "median":
+			# Collect the values from residuals
+			times     = []
+			stdmags   = []
+			resids    = []
+			for residual in residuals:
+				if residual["medres"] < 100:
+					times.append(residual["timeshift"])
+					stdmags.append(residual["stdmag"])
+					resids.append(residual["medres"])
+
+			# Get the best value from residuals
+			# WARNING : Dangerous to proceed like this ! Use dict sort instead !!!!
+			minindex = resids.index(min(resids))
+			timemin = times[minindex]
+
+
+			resids = np.log10(resids)
+			sc = plt.scatter(times,resids,s=50,c=stdmags)
+			plt.plot(times,resids,'k--')
+			plt.colorbar(sc)
+			plt.scatter(timemin,min(resids),s=160,c='grey',marker="d")
+			plt.plot([truedelay,truedelay],[min(resids),max(resids)],'--',c='green',linewidth=2.5)
+				
+		elif mode == "individual":
+		
+			# Initialise a list of fancy colors, one per season (max.# of seasons = 10)
+			colors = ['red','green','blue','orange','black','crimson','chartreuse','magenta','gray','salmon']
+		
+			# Collect the values from residuals
+			times_seas     = []
+			mags_seas      = []
+			resids_seas    = []
+			
+			# get the number of seasons in residuals, by looking at the number of times *_medres is present as a keyword in the first residual
+			nseasons = len([kw for kw in residuals[0] if "medres" in kw.split('_')])
+
+			# initialise empty arrays, one per season
+			for ind in np.arange(nseasons):
+				times_seas.append([])
+				mags_seas.append([])
+				resids_seas.append([])				
+			
+
+			# fill these arrays
+			for residual in residuals: # loop over time
+				for ind in np.arange(nseasons): # loop over seasons				
+					if residual["s%i_medres"%int(ind+1)] < 100:
+						times_seas[ind].append(residual["timeshift"])
+						mags_seas[ind].append(residual["s%i_mag"%int(ind+1)])
+						resids_seas[ind].append(residual["s%i_medres"%int(ind+1)])
+			for ind in np.arange(nseasons):
+				resids_seas[ind] = [np.log10(elt) for elt in resids_seas[ind]] # more precise in log10
+					
+						
+			# plot the shit out of them
+			for ind in np.arange(nseasons):
+			
+				minindex = resids_seas[ind].index(min(resids_seas[ind]))
+				timemin = times_seas[ind][minindex]
+			
+
+				plt.plot(times_seas[ind],resids_seas[ind],color=colors[ind],linewidth=2,label='s%i'%int(ind+1))
+				plt.scatter(timemin,min(resids_seas[ind]),s=160,c=colors[ind])
+			
+			plt.legend()	
+			plt.plot([truedelay,truedelay],[min([min(resids_sea) for resids_sea in resids_seas]),max([max(resids_sea) for resids_sea in resids_seas])],'--',c='indigo',linewidth=2.5)
+			
+				
 		if savefig==True:
-			plt.savefig("%s/plot_mlres.png" %(workdir))
+			plt.savefig("%s/plot_res_%s_%s.png" %(workdir,resmode,mode))
 			plt.close()
 		else:	
 			plt.show()
@@ -415,8 +498,8 @@ def displaycrudeopt(rung,pair,residuals,timesteps,magsteps,resmode,workdir=".",s
 
 if __name__ == "__main__":
 
-	rung = 0
-	pair = 487
+	rung = 1
+	pair = 324
 	
 	workdir = 'tdc1_%i_%i' %(rung,pair)
 	if not os.path.isdir(workdir):
@@ -430,13 +513,11 @@ if __name__ == "__main__":
 
 
 	# get the residuals
-	residuals = getresiduals(lcs,spline,magsteps,timesteps,resmode='perseasons',minoverlap=10,workdir=workdir,display=True)
+	residuals = getresiduals(lcs,spline,magsteps,timesteps,resmode='perseasons',mode="individual",minoverlap=10,workdir=workdir,display=True)
 	
 
-	#minelt = sorted(residuals,key=lambda residual: residual["medres"])[0]
-
 	# plot the residuals
-	displaycrudeopt(rung,pair,residuals,timesteps,magsteps,resmode='perseasons',workdir=".",savefig=False)
+	displaycrudeopt(rung,pair,residuals,timesteps,magsteps,resmode='perseasons',mode="individual",workdir=".",savefig=False)
 
 
 
