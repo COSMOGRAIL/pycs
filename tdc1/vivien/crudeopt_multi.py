@@ -53,7 +53,8 @@ def fitsplinesinglecurve(rung,pair,workdir="."):
 		bokit=0, bokeps=bokeps, boktests=5, bokwindow=bokwindow, verbose=False)
 
 	lcs=(lca,lcb)
-	pycs.gen.lc.display([lca,lcb],[spline],filename="%s/spline.png" %(workdir))	
+	pycs.gen.lc.display([lca,lcb],[spline],filename="%s/spline.png" %(workdir))
+	pycs.gen.util.writepickle(spline,"%s/spline.pkl" %(workdir))	
 	return lcs,spline
 	
 
@@ -184,8 +185,7 @@ def getresidual_singleshift(lcs,spline,timeshift,magshift,minoverlap=3,display=F
 		for index in indexes:
 			lcb.mask[index[0]] = True
 		if not os.path.isdir('%s/inseas' %workdir):
-			os.mkdir('%s/inseas' %workdir)	
-		#pycs.gen.lc.display([lca,lcb],[spline])			
+			os.mkdir('%s/inseas' %workdir)				
 		pycs.gen.lc.display([lca,lcb],[spline],filename="%s/inseas/t%i_m%.2f.png" %(workdir,timeshift,magshift))
 		
 	return sumresidual
@@ -241,7 +241,7 @@ def getresidual_perseasons(lcs,spline,timeshift,magsteps,mode,minoverlap=3,displ
 			lcbcop.shiftmag(magshift)
 			if len(lcbcop.getjds()) > minoverlap:
 				pycs.sim.draw.saveresiduals([lcbcop],spline)		
-				sumresidual = sum(abs(lcbcop.residuals))/float(len(lcbcop.residuals))	
+				sumresidual = sum(abs(lcbcop.residuals))/float(len(lcbcop.residuals)) / float(np.sqrt(len(lcbcop.residuals)))
 			else:
 				sumresidual = 100.0	
 			
@@ -256,16 +256,21 @@ def getresidual_perseasons(lcs,spline,timeshift,magsteps,mode,minoverlap=3,displ
 		#pycs.gen.lc.display([lca,lcbcop],[spline])
 		#sys.exit()
 	
+
+
+    # how many seasons are kicked off the analysis
+	# nrm = nseasons/5*(-1) # Bad idea. We need a better criteria to shoot seasons from analysis.
+	
 	# seasonsresults is a list, each element refers to one season, and contain the best magshift and corresponding residuals
 	if mode == "sum":
 		# return the sum of the best residuals for each season
-		overallresidual = np.sum(sorted([seasonsresult[1] for seasonsresult in seasonsresults])[:])
+		overallresidual = np.sum(sorted([seasonsresult[1] for seasonsresult in seasonsresults]))
 		stdmag = np.std([seasonsresult[0] for seasonsresult in seasonsresults]) # compute std of the magshifts per seasons. Can be useful to characterise ML intensity...
 		return overallresidual,stdmag
 		
 	if mode == "median":
 		# return the median of the best residuals for each season
-		overallresidual = np.median(sorted([seasonsresult[1] for seasonsresult in seasonsresults])[:])
+		overallresidual = np.median(sorted([seasonsresult[1] for seasonsresult in seasonsresults]))
 		stdmag = np.std([seasonsresult[0] for seasonsresult in seasonsresults]) # compute std of the magshifts per seasons. Can be useful to characterise ML intensity...
 		return overallresidual,stdmag		
 		
@@ -331,8 +336,68 @@ def getresiduals(lcs,spline,magsteps,mytimesteps,resmode,mode="sum",minoverlap=1
 	
 	return residuals
 	
-	
-	
+
+
+def getconfidence(residuals, workdir=".", mode="undefined"):
+
+
+    from scipy.signal import argrelextrema as ag
+    """
+    First attempt to return a confidence level for the crude estimation
+    I look at the "shape" of the residual curve, looking for a "strong" minimum corresponding to the guessed delay
+
+    For now, works only with sum residuals
+    """
+
+    # Collect the values from residuals
+    times     = []
+    resids    = []
+    for residual in residuals:
+        if residual["medres"] < 100:
+            times.append(residual["timeshift"])
+            resids.append(residual["medres"])
+
+    # look for minimas in resids:
+    resids = np.array(resids)
+    minimas = ag(resids, np.less, axis=0, order=10, mode='clip')
+
+
+    meanres =  np.mean(resids)
+    stdres = np.std(resids)
+
+    minparams = []
+    for ind,minima in enumerate(minimas[0]):
+        minparam = {}
+        # compute sigma scatter on the whole curve
+        sigscat = (meanres-resids[minima])/stdres
+
+        #if sigscat >=  1.5:
+        #print "Minima %i:" %int(ind+1), " dt = %.2f"%times[minima], " res = %.2f"%resids[minima], " scatter = %.2f"%sigscat
+
+        minparam["time"]  = times[minima]
+        minparam["resid"] = resids[minima]
+        minparam["scatter"] = sigscat
+        minparams.append(minparam)
+
+
+    conflevel = 3
+    if len(minparams) > 0:
+	if max([minparam["scatter"] for minparam in minparams]) >= 2:
+	    conflevel = 1
+	elif max([minparam["scatter"] for minparam in minparams]) >= 1:
+	    conflevel = 2
+    else:
+	    conflevel = 4
+
+
+    print conflevel
+
+
+    pycs.gen.util.writepickle((minparams,conflevel),os.path.join(workdir, "%s_mins.pkl" %mode))
+    return (minparams,conflevel)
+
+
+
 #########################################################
 ###   PLOT RESULTS
 #########################################################
@@ -405,7 +470,7 @@ def displaycrudeopt(rung,pair,residuals,timesteps,magsteps,resmode,mode="sum",wo
 		lines = [line.split() for line in lines]
 		filename = os.path.basename(pycs.tdc.util.tdcfilepath('tdc1',rung,pair))
 		truedelay = 0
-		for line in lines: #ooooh god this is ugly
+		for line in lines:  # ooooh god this is ugly
 			if line[0] == filename:
 				truedelay = float(line[1])*(-1.0)
 				
@@ -426,6 +491,15 @@ def displaycrudeopt(rung,pair,residuals,timesteps,magsteps,resmode,mode="sum",wo
 					stdmags.append(residual["stdmag"])
 					resids.append(residual["medres"])
 
+
+			# get confidence level
+			(minparams, conflevel) = getconfidence(residuals, workdir=workdir, mode=mode)
+			for minparam in minparams:
+				print minparam["time"],minparam["resid"]
+				plt.annotate("%.2f" %minparam["scatter"], xy=[minparam["time"]-10,np.log10(minparam["resid"])-0.03], fontsize=15)
+
+
+
 			# Get the best value from residuals
 			# WARNING : Dangerous to proceed like this ! Use dict sort instead !!!!
 			minindex = resids.index(min(resids))
@@ -436,7 +510,8 @@ def displaycrudeopt(rung,pair,residuals,timesteps,magsteps,resmode,mode="sum",wo
 			sc = plt.scatter(times,resids,s=50,c=stdmags)
 			plt.plot(times,resids,'k--')
 			plt.colorbar(sc)
-			plt.scatter(timemin,min(resids),s=160,c='grey',marker="d")
+			confcolors=["blue", "green", "yellow", "red"]
+			plt.scatter(timemin,min(resids),s=200,c=confcolors[conflevel-1],marker="d")
 			plt.plot([truedelay,truedelay],[min(resids),max(resids)],'--',c='green',linewidth=2.5)
 				
 		elif mode == "individual":
@@ -495,16 +570,18 @@ def displaycrudeopt(rung,pair,residuals,timesteps,magsteps,resmode,mode="sum",wo
 ##############
 
 # Let's play directly with these functions
+# For testing purposes...
 
 if __name__ == "__main__":
 
-	rung = 1
-	pair = 324
-	
+
+	rung = 4
+	pair = 337
+
 	workdir = 'tdc1_%i_%i' %(rung,pair)
 	if not os.path.isdir(workdir):
 		os.mkdir(workdir)
-	
+
 	# get the spline and lcs
 	lcs,spline = fitsplinesinglecurve(rung,pair,workdir)
 
@@ -512,14 +589,23 @@ if __name__ == "__main__":
 	magsteps,timesteps = getgrid(lcs,nmagsteps=20,ntimesteps=100)
 
 
-	# get the residuals
-	residuals = getresiduals(lcs,spline,magsteps,timesteps,resmode='perseasons',mode="individual",minoverlap=10,workdir=workdir,display=True)
-	
+	# get the residuals, and plot them
+	# residuals = getresiduals(lcs,spline,magsteps,timesteps,resmode='singleshift',minoverlap=10,workdir=workdir,display=False)
+	# displaycrudeopt(rung,pair,residuals,timesteps,magsteps,resmode='singleshift',workdir=workdir,savefig=True)
 
-	# plot the residuals
-	displaycrudeopt(rung,pair,residuals,timesteps,magsteps,resmode='perseasons',mode="individual",workdir=".",savefig=False)
+	residuals = getresiduals(lcs,spline,magsteps,timesteps,resmode='perseasons',mode="sum",minoverlap=0,workdir=workdir,display=False)
+	displaycrudeopt(rung,pair,residuals,timesteps,magsteps,resmode='perseasons',mode="sum",workdir=workdir,savefig=False)
 
+	"""
+	residuals = getresiduals(lcs,spline,magsteps,timesteps,resmode='perseasons',mode="median",minoverlap=3,workdir=workdir,display=False)
+	displaycrudeopt(rung,pair,residuals,timesteps,magsteps,resmode='perseasons',mode="median",workdir=workdir,savefig=True)
 
+	residuals = getresiduals(lcs,spline,magsteps,timesteps,resmode='perseasons',mode="individual",minoverlap=3,workdir=workdir,display=False)
+	displaycrudeopt(rung,pair,residuals,timesteps,magsteps,resmode='perseasons',mode="individual",workdir=workdir,savefig=True)
+
+	import combine_pngs
+	combine_pngs.makeplot(".",[workdir],False)
+	"""
 
 
 
