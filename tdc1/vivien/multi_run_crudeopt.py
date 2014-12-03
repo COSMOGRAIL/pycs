@@ -166,7 +166,7 @@ def start_process():
 
 
 
-pool_size = 6  # multiprocessing.cpu_count()
+pool_size =  multiprocessing.cpu_count()
 pool = multiprocessing.Pool(processes = pool_size, initializer=start_process)
 pool_out = pool.map(crudeopt_sum,args)
 pool.close()	

@@ -399,9 +399,9 @@ def getconfparams(residuals, workdir=".", mode="undefined"):
 	# this is stupid. Like, really stupid.
     conflevel = 3
     if len(minparams) > 0:
-	if max([minparam["scatter"] for minparam in minparams]) >= 2:
+	if max([minparam["sigres"] for minparam in minparams]) >= 2:
 	    conflevel = 1
-	elif max([minparam["scatter"] for minparam in minparams]) >= 1:
+	elif max([minparam["sigres"] for minparam in minparams]) >= 1:
 	    conflevel = 2
     else:
 	    conflevel = 4
@@ -516,7 +516,7 @@ def displaycrudeopt(rung,pair,residuals,timesteps,magsteps,resmode,mode="sum",wo
 			(sigresids, sigstdmags,minparams, conflevel) = getconfparams(residuals, workdir=workdir, mode=mode)
 			for minparam in minparams:
 				print minparam["time"],minparam["resid"]
-				plt.annotate("%.2f" %minparam["scatter"], xy=[minparam["time"]-10,np.log10(minparam["resid"])-0.045], fontsize=15)
+				plt.annotate("%.2f" %minparam["sigres"], xy=[minparam["time"]-10,np.log10(minparam["resid"])-0.045], fontsize=15)
 
 
 
