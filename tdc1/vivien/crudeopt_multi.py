@@ -9,8 +9,11 @@ basically, everything here is function
 Implement it as a pycs module once its working...
 
  
-TODO:
-	Create a database with the true delays, the d3cs delay and confidence level, and add the delay estimate from this script  
+WAAAARNIIIIIIINNNNGGG:
+
+The more features I add, the messier this module gets. Before making it public, this should be rewritten using a Class
+to store all these parameters, instead of writing tons of separated pkls for each curve...
+
 """
 
 #########################################################
@@ -338,22 +341,25 @@ def getresiduals(lcs,spline,magsteps,mytimesteps,resmode,mode="sum",minoverlap=1
 	
 
 
-def getconfidence(residuals, workdir=".", mode="undefined"):
-
+def getconfparams(residuals, workdir=".", mode="undefined"):
 
     from scipy.signal import argrelextrema as ag
     """
-    First attempt to return a confidence level for the crude estimation
+    First attempt to return confidence parameters for the crude estimation
     I look at the "shape" of the residual curve, looking for a "strong" minimum corresponding to the guessed delay
 
-    For now, works only with sum residuals
+    For now, works only with sum and median residuals
+
+
     """
 
     # Collect the values from residuals
     times     = []
     resids    = []
+    stdmags   = []
     for residual in residuals:
         if residual["medres"] < 100:
+            stdmags.append(residual["stdmag"])
             times.append(residual["timeshift"])
             resids.append(residual["medres"])
 
@@ -361,25 +367,36 @@ def getconfidence(residuals, workdir=".", mode="undefined"):
     resids = np.array(resids)
     minimas = ag(resids, np.less, axis=0, order=10, mode='clip')
 
-
+    # compute mean and std for sigma display of residuals and magshifts
+    meansig = np.mean(stdmags)
+    stdsig  = float(np.std(stdmags))
     meanres =  np.mean(resids)
-    stdres = np.std(resids)
+    stdres = float(np.std(resids))
 
+    # rescale residuals and magshifts
+    sigresids = [abs(resid-meanres)/stdres for resid in resids] # to characterise the depth of the minimas
+    sigstdmags = [(stdmag-min(stdmags))/stdsig for stdmag in stdmags] # to characterise the strength of microlensing
+
+
+    # compute special statistics for the minimas
     minparams = []
     for ind,minima in enumerate(minimas[0]):
         minparam = {}
         # compute sigma scatter on the whole curve
-        sigscat = (meanres-resids[minima])/stdres
+        sigres = (meanres-resids[minima])/stdres
+        sigmag = (meansig-stdmags[minima])/stdsig
 
         #if sigscat >=  1.5:
         #print "Minima %i:" %int(ind+1), " dt = %.2f"%times[minima], " res = %.2f"%resids[minima], " scatter = %.2f"%sigscat
 
         minparam["time"]  = times[minima]
         minparam["resid"] = resids[minima]
-        minparam["scatter"] = sigscat
+        minparam["sigres"] = sigres
+        minparam["sigmag"] = sigmag
         minparams.append(minparam)
 
 
+	# this is stupid. Like, really stupid.
     conflevel = 3
     if len(minparams) > 0:
 	if max([minparam["scatter"] for minparam in minparams]) >= 2:
@@ -390,11 +407,8 @@ def getconfidence(residuals, workdir=".", mode="undefined"):
 	    conflevel = 4
 
 
-    print conflevel
-
-
-    pycs.gen.util.writepickle((minparams,conflevel),os.path.join(workdir, "%s_mins.pkl" %mode))
-    return (minparams,conflevel)
+    pycs.gen.util.writepickle((sigresids,sigstdmags,minparams,conflevel),os.path.join(workdir, "%s_mins.pkl" %mode))
+    return (sigresids,sigstdmags,minparams,conflevel)
 
 
 
@@ -474,11 +488,17 @@ def displaycrudeopt(rung,pair,residuals,timesteps,magsteps,resmode,mode="sum",wo
 			if line[0] == filename:
 				truedelay = float(line[1])*(-1.0)
 				
-		plt.figure()
-		plt.suptitle(filename)		
-		plt.xlabel('B Time Shift [days]')
-		plt.ylabel('log10 Absolute average residuals')		
-		
+		fig = plt.figure()
+		plt.subplots_adjust(left=0.11, right=1, top=0.9, bottom=0.1)
+		ax=fig.add_subplot(111)
+		plt.suptitle(filename, fontsize =15)
+		plt.xlabel('Time Shift [days]',fontsize=15)
+		plt.ylabel('log10 absolute average residuals', fontsize=15)
+		for tick in ax.xaxis.get_major_ticks():
+			tick.label.set_fontsize(15)
+		for tick in ax.yaxis.get_major_ticks():
+			tick.label.set_fontsize(15)
+
 		
 		if mode == "sum" or mode == "median":
 			# Collect the values from residuals
@@ -492,11 +512,11 @@ def displaycrudeopt(rung,pair,residuals,timesteps,magsteps,resmode,mode="sum",wo
 					resids.append(residual["medres"])
 
 
-			# get confidence level
-			(minparams, conflevel) = getconfidence(residuals, workdir=workdir, mode=mode)
+			# get confidence parameters
+			(sigresids, sigstdmags,minparams, conflevel) = getconfparams(residuals, workdir=workdir, mode=mode)
 			for minparam in minparams:
 				print minparam["time"],minparam["resid"]
-				plt.annotate("%.2f" %minparam["scatter"], xy=[minparam["time"]-10,np.log10(minparam["resid"])-0.03], fontsize=15)
+				plt.annotate("%.2f" %minparam["scatter"], xy=[minparam["time"]-10,np.log10(minparam["resid"])-0.045], fontsize=15)
 
 
 
@@ -507,13 +527,15 @@ def displaycrudeopt(rung,pair,residuals,timesteps,magsteps,resmode,mode="sum",wo
 
 
 			resids = np.log10(resids)
-			sc = plt.scatter(times,resids,s=50,c=stdmags)
-			plt.plot(times,resids,'k--')
-			plt.colorbar(sc)
 			confcolors=["blue", "green", "yellow", "red"]
-			plt.scatter(timemin,min(resids),s=200,c=confcolors[conflevel-1],marker="d")
-			plt.plot([truedelay,truedelay],[min(resids),max(resids)],'--',c='green',linewidth=2.5)
-				
+			plt.scatter(timemin,min(resids),s=350,c=confcolors[conflevel-1],marker="d",alpha=0.5)
+			plt.plot([truedelay,truedelay],[min(resids),max(resids)],'--',c='black',linewidth=2.5, alpha=0.5)
+			sc = plt.scatter(times,resids,s=50,c=sigstdmags)
+			plt.plot(times,resids,'k--')
+			cbar = plt.colorbar(sc)
+			cbar.set_label("mean seasonal magnitude shift [sigma]", fontsize=15)
+			cbar.ax.tick_params(labelsize=15)
+
 		elif mode == "individual":
 		
 			# Initialise a list of fancy colors, one per season (max.# of seasons = 10)
@@ -575,8 +597,8 @@ def displaycrudeopt(rung,pair,residuals,timesteps,magsteps,resmode,mode="sum",wo
 if __name__ == "__main__":
 
 
-	rung = 4
-	pair = 337
+	rung = 1
+	pair = 224
 
 	workdir = 'tdc1_%i_%i' %(rung,pair)
 	if not os.path.isdir(workdir):

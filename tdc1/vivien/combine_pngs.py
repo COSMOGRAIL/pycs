@@ -75,7 +75,7 @@ if __name__ == "__main__":
 
 	workdir = 'all-4'
 	pairids = ['tdc1_0_1014','tdc1_3_313','tdc1_1_507']
-	mergesumspics(workdir,pairids)
+	#mergesumspics(workdir,pairids)
 	#filelists = sorted(glob.glob(os.path.join(workdir,'tdc1_*_*')))
 	#makeplot(workdir,filelists)
 

@@ -151,24 +151,65 @@ def addcrudeopt(db, methodpath):
 		# get residuals from pkl
 		#resids_perseasons_individual = pycs.gen.util.readpickle(os.path.join(dirpath,'resids_perseasons_individual.pkl')) # save it for later...
 		#resids_perseasons_median = pycs.gen.util.readpickle(os.path.join(dirpath,'resids_perseasons_median.pkl'))
-		resids_perseasons_sum = pycs.gen.util.readpickle(os.path.join(dirpath,'resids_perseasons_sum.pkl'))
+		#resids_perseasons_sum = pycs.gen.util.readpickle(os.path.join(dirpath,'resids_perseasons_sum.pkl'))
 		#resids_singleshift = pycs.gen.util.readpickle(os.path.join(dirpath,'resids_singleshift.pkl'))
 
 		# add them to the database
+
 		
 		# sort by medres, and take the first one and the timeshift associated
-		# db[pairid]["%s_perseasons_median_td" %methodpath] = sorted(resids_perseasons_median,key=lambda resid: resid["medres"])[0]["timeshift"]
-		# db[pairid]["%s_perseasons_median_res" %methodpath] = sorted(resids_perseasons_median,key=lambda resid: resid["medres"])[0]["medres"]
-		db[pairid]["%s_perseasons_sum_td" %methodpath] = sorted(resids_perseasons_sum,key=lambda resid: resid["medres"])[0]["timeshift"]
-		db[pairid]["%s_perseasons_sum_res" %methodpath] = sorted(resids_perseasons_sum,key=lambda resid: resid["medres"])[0]["medres"]
-		db[pairid]["%s_perseasons_sum_stdmag" %methodpath] = sorted(resids_perseasons_sum,key=lambda resid: resid["medres"])[0]["stdmag"]
+
 		# db[pairid]["%s_singleshift_td" %methodpath] = sorted(resids_singleshift,key=lambda resid: resid["medres"])[0]["timeshift"]
 		# db[pairid]["%s_singleshift_res" %methodpath] = sorted(resids_singleshift,key=lambda resid: resid["medres"])[0]["medres"]
 
+		# db[pairid]["%s_perseasons_median_td" %methodpath] = sorted(resids_perseasons_median,key=lambda resid: resid["medres"])[0]["timeshift"]
+		# db[pairid]["%s_perseasons_median_res" %methodpath] = sorted(resids_perseasons_median,key=lambda resid: resid["medres"])[0]["medres"]
+
+		""" # Here I take the absolute minimum
+		db[pairid]["%s_perseasons_sum_td" %methodpath] = sorted(resids_perseasons_sum,key=lambda resid: resid["medres"])[0]["timeshift"]
+		db[pairid]["%s_perseasons_sum_res" %methodpath] = sorted(resids_perseasons_sum,key=lambda resid: resid["medres"])[0]["medres"]
+
+		(resids,stdmags,minparams,conflevel)= pycs.gen.util.readpickle(os.path.join(dirpath,'sums_mins.pkl'))
+
+		meanstdmag = np.mean([resid["stdmag"] for resid in resids_perseasons_sum])
+		stdstdmag = float(np.std([resid["stdmag"] for resid in resids_perseasons_sum]))
+		db[pairid]["%s_perseasons_sum_stdmag" %methodpath] = abs(sorted(resids_perseasons_sum,key=lambda resid: resid["medres"])[0]["stdmag"] - meanstdmag)/stdstdmag
+		"""
+		# build db using minimas
+		(resids,stdmags,minparams,conflevel)= pycs.gen.util.readpickle(os.path.join(dirpath,'sums_mins.pkl'))
+
+		if len(minparams) > 0:
+			minparams = sorted(minparams, key=lambda minparam: minparam["resid"]) # sort minimas by residual value
+
+			# smallest minima parameters
+			db[pairid]["%s_perseasons_sum_td" %methodpath] = minparams[0]["timeshift"]
+			db[pairid]["%s_perseasons_sum_resid" %methodpath] = minparams[0]["resid"]
+			db[pairid]["%s_perseasons_sum_sigresid" %methodpath] = minparams[0]["sigres"]
+			db[pairid]["%s_perseasons_sum_sigmag" %methodpath] = minparams[0]["sigmag"]
+
+			# all minimas parameters (redundancy for the smallest minima, but who cares...)
+			db[pairid]["%s_perseasons_sum_mintds" %methodpath] = [minparam["timeshift"] for minparam in minparams]
+			db[pairid]["%s_perseasons_sum_minresids" %methodpath] = [minparam["resid"] for minparam in minparams]
+			db[pairid]["%s_perseasons_sum_minsigresids" %methodpath] = [minparam["sigres"] for minparam in minparams]
+			db[pairid]["%s_perseasons_sum_minsigmags" %methodpath] = [minparam["sigmag"] for minparam in minparams]
+
+		else:
+			db[pairid]["%s_perseasons_sum_td" %methodpath] = 999
+			db[pairid]["%s_perseasons_sum_resid" %methodpath] = 999
+			db[pairid]["%s_perseasons_sum_sigresid" %methodpath] = 999
+			db[pairid]["%s_perseasons_sum_sigmag" %methodpath] = 999
+
+			db[pairid]["%s_perseasons_sum_mintds" %methodpath] = []
+			db[pairid]["%s_perseasons_sum_minresids" %methodpath] = []
+			db[pairid]["%s_perseasons_sum_minsigresids" %methodpath] = []
+			db[pairid]["%s_perseasons_sum_minsigmags" %methodpath] = []
+
+
 		# add new confidence estimation
-		(minparams,conflevel) = pycs.gen.util.readpickle(os.path.join(dirpath, 'sum_mins.pkl'))
-		db[pairid]["%s_crude_conflevel" %methodpath] = conflevel
+
+		db[pairid]["%s_crude_conflevel" %methodpath] = conflevel # this one is stupid
 		db[pairid]["%s_crude_nmin" %methodpath] = len(minparams)
+
 		if len(minparams) > 0:
 			db[pairid]["%s_crude_sigmabestmin" %methodpath] = sorted(minparams,key=lambda minparam: -1.0*minparam["scatter"])[0]["scatter"]
 		else:

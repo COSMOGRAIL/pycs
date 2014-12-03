@@ -129,27 +129,29 @@ def crudeopt_sum(arg):
 	if not os.path.isdir(myworkdir):
 		os.mkdir(myworkdir)
 
+
 	# check if  last residual computation has already been made
 	if os.path.isfile(os.path.join(myworkdir,'plot_res_perseasons_sum.png')):
 		print '%s already treated' % os.path.basename(myworkdir)
 		return
 
+
 	# get the spline and lcs
 	mylcs,myspline = fitsplinesinglecurve(rung=myrung,pair=mypair,workdir=myworkdir)
 
 	# get the grid
-	mymagsteps,mytimesteps = getgrid(lcs=mylcs,nmagsteps=40,ntimesteps=200) # default is 20,100
+	mymagsteps,mytimesteps = getgrid(lcs=mylcs,nmagsteps=20,ntimesteps=100) # default is 20,100
 
 
 	# get and plot the residuals for perseasons_sum
 	myresiduals = getresiduals(lcs=mylcs,spline=myspline,magsteps=mymagsteps,mytimesteps=mytimesteps,resmode='perseasons',
-					mode='sum',minoverlap=0,workdir=myworkdir,display=False)
+					mode='sum',minoverlap=3,workdir=myworkdir,display=False)
 	displaycrudeopt(rung=myrung,pair=mypair,residuals=myresiduals,timesteps=mytimesteps,magsteps=mymagsteps,
 					resmode='perseasons',mode='sum',workdir=myworkdir,savefig=True)
 
 	
 #### Get the pairs I want to run on...
-wkb = 'all-6'
+wkb = 'all-7'
 
 db = pycs.gen.util.readpickle("../joined.pkl").values()
 items = [item for item in db if "confidence" in item]
