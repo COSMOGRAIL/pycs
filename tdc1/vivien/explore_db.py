@@ -17,7 +17,7 @@ fig,ax1 = plt.subplots()
 ax1 = fig.add_subplot(111)
 
 colors=['chartreuse','crimson','cyan']
-for ind,method in enumerate(["all-4","all-5"]):
+for ind,method in enumerate(["all-7"]):
 	sigmas = np.linspace(0,max([entry["%s_crude_sigmabestmin" %method] for entry in db]),500)
 	errfrac_auto = []
 	errfrac_d3cs = []

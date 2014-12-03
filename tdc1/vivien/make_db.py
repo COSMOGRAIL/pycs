@@ -176,19 +176,19 @@ def addcrudeopt(db, methodpath):
 		db[pairid]["%s_perseasons_sum_stdmag" %methodpath] = abs(sorted(resids_perseasons_sum,key=lambda resid: resid["medres"])[0]["stdmag"] - meanstdmag)/stdstdmag
 		"""
 		# build db using minimas
-		(resids,stdmags,minparams,conflevel)= pycs.gen.util.readpickle(os.path.join(dirpath,'sums_mins.pkl'))
+		(resids,stdmags,minparams,conflevel)= pycs.gen.util.readpickle(os.path.join(dirpath,'sum_mins.pkl'))
 
 		if len(minparams) > 0:
 			minparams = sorted(minparams, key=lambda minparam: minparam["resid"]) # sort minimas by residual value
 
 			# smallest minima parameters
-			db[pairid]["%s_perseasons_sum_td" %methodpath] = minparams[0]["timeshift"]
+			db[pairid]["%s_perseasons_sum_td" %methodpath] = minparams[0]["time"]
 			db[pairid]["%s_perseasons_sum_resid" %methodpath] = minparams[0]["resid"]
 			db[pairid]["%s_perseasons_sum_sigresid" %methodpath] = minparams[0]["sigres"]
 			db[pairid]["%s_perseasons_sum_sigmag" %methodpath] = minparams[0]["sigmag"]
 
 			# all minimas parameters (redundancy for the smallest minima, but who cares...)
-			db[pairid]["%s_perseasons_sum_mintds" %methodpath] = [minparam["timeshift"] for minparam in minparams]
+			db[pairid]["%s_perseasons_sum_mintds" %methodpath] = [minparam["time"] for minparam in minparams]
 			db[pairid]["%s_perseasons_sum_minresids" %methodpath] = [minparam["resid"] for minparam in minparams]
 			db[pairid]["%s_perseasons_sum_minsigresids" %methodpath] = [minparam["sigres"] for minparam in minparams]
 			db[pairid]["%s_perseasons_sum_minsigmags" %methodpath] = [minparam["sigmag"] for minparam in minparams]
@@ -210,14 +210,15 @@ def addcrudeopt(db, methodpath):
 		db[pairid]["%s_crude_conflevel" %methodpath] = conflevel # this one is stupid
 		db[pairid]["%s_crude_nmin" %methodpath] = len(minparams)
 
+		"""
 		if len(minparams) > 0:
 			db[pairid]["%s_crude_sigmabestmin" %methodpath] = sorted(minparams,key=lambda minparam: -1.0*minparam["scatter"])[0]["scatter"]
 		else:
 			db[pairid]["%s_crude_sigmabestmin" %methodpath] = 0
+		"""
 
 
-
-for methodpath in ["all-4","all-5","all-6"]:
+for methodpath in ["all-7"]:
 	addcrudeopt(db,methodpath)
 	
 ##############   pkl export    ##############
