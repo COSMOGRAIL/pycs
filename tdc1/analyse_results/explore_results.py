@@ -3,7 +3,7 @@ import numpy as np
 import os,sys
 import matplotlib.pyplot as plt
 
-metrics = open('results_tdc1/metrics.txt').readlines()
+metrics = open('metrics.txt').readlines()
 
 
 # team algorithm rung f chi2 chi2err P Perr A Aerr X f-nc chi2-nc chi2-ncerr P-nc P-ncerr A-nc A-ncerr

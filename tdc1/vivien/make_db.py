@@ -140,7 +140,6 @@ for user in users_to_add:
 def addcrudeopt(db, methodpath):
 	
 	dirpaths = sorted(glob.glob(os.path.join(methodpath,'tdc1_*_*')))
-
 	for dirpath in dirpaths:
 		# get rung and pair from path
 		rung = dirpath.split('_')[-2]
@@ -156,7 +155,6 @@ def addcrudeopt(db, methodpath):
 
 		# add them to the database
 
-		
 		# sort by medres, and take the first one and the timeshift associated
 
 		# db[pairid]["%s_singleshift_td" %methodpath] = sorted(resids_singleshift,key=lambda resid: resid["medres"])[0]["timeshift"]
@@ -175,6 +173,8 @@ def addcrudeopt(db, methodpath):
 		stdstdmag = float(np.std([resid["stdmag"] for resid in resids_perseasons_sum]))
 		db[pairid]["%s_perseasons_sum_stdmag" %methodpath] = abs(sorted(resids_perseasons_sum,key=lambda resid: resid["medres"])[0]["stdmag"] - meanstdmag)/stdstdmag
 		"""
+
+
 		# build db using minimas
 		(resids,stdmags,minparams,conflevel)= pycs.gen.util.readpickle(os.path.join(dirpath,'sum_mins.pkl'))
 
@@ -195,14 +195,14 @@ def addcrudeopt(db, methodpath):
 
 		else:
 			db[pairid]["%s_perseasons_sum_td" %methodpath] = 999
-			db[pairid]["%s_perseasons_sum_resid" %methodpath] = 999
-			db[pairid]["%s_perseasons_sum_sigresid" %methodpath] = 999
+			db[pairid]["%s_perseasons_sum_resid" %methodpath] = 10
+			db[pairid]["%s_perseasons_sum_sigresid" %methodpath] = 0
 			db[pairid]["%s_perseasons_sum_sigmag" %methodpath] = 999
 
-			db[pairid]["%s_perseasons_sum_mintds" %methodpath] = []
-			db[pairid]["%s_perseasons_sum_minresids" %methodpath] = []
-			db[pairid]["%s_perseasons_sum_minsigresids" %methodpath] = []
-			db[pairid]["%s_perseasons_sum_minsigmags" %methodpath] = []
+			db[pairid]["%s_perseasons_sum_mintds" %methodpath] = [999]
+			db[pairid]["%s_perseasons_sum_minresids" %methodpath] = [10]
+			db[pairid]["%s_perseasons_sum_minsigresids" %methodpath] = [0]
+			db[pairid]["%s_perseasons_sum_minsigmags" %methodpath] = [999]
 
 
 		# add new confidence estimation
@@ -216,6 +216,7 @@ def addcrudeopt(db, methodpath):
 		else:
 			db[pairid]["%s_crude_sigmabestmin" %methodpath] = 0
 		"""
+
 
 
 for methodpath in ["all-7"]:

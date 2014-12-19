@@ -461,7 +461,7 @@ def displaycrudeopt(rung,pair,residuals,timesteps,magsteps,resmode,mode="sum",wo
 
 
 		# Finally, the plot !
-		plt.figure()	
+		plt.figure()
 		CS=plt.contourf(X,Y,resids,100,cmap=cm.bone)
 		plt.contour(X,Y,resids,30,colors='white')
 		plt.colorbar(CS)
@@ -488,12 +488,13 @@ def displaycrudeopt(rung,pair,residuals,timesteps,magsteps,resmode,mode="sum",wo
 			if line[0] == filename:
 				truedelay = float(line[1])*(-1.0)
 				
-		fig = plt.figure()
-		plt.subplots_adjust(left=0.11, right=1, top=0.9, bottom=0.1)
+		fig = plt.figure(figsize=(5,6))
+		plt.subplots_adjust(left=0.11, right=0.86, top=0.93, bottom=0.1)
 		ax=fig.add_subplot(111)
 		plt.suptitle(filename, fontsize =15)
 		plt.xlabel('Time Shift [days]',fontsize=15)
-		plt.ylabel('log10 absolute average residuals', fontsize=15)
+		plt.ylabel(r'absolute average residual [$log10(r_{\Delta t_{i}})$]', fontsize=15)
+		ax.yaxis.set_label_coords(0.08, 0.5)
 		for tick in ax.xaxis.get_major_ticks():
 			tick.label.set_fontsize(15)
 		for tick in ax.yaxis.get_major_ticks():
@@ -516,7 +517,7 @@ def displaycrudeopt(rung,pair,residuals,timesteps,magsteps,resmode,mode="sum",wo
 			(sigresids, sigstdmags,minparams, conflevel) = getconfparams(residuals, workdir=workdir, mode=mode)
 			for minparam in minparams:
 				print minparam["time"],minparam["resid"]
-				plt.annotate("%.2f" %minparam["sigres"], xy=[minparam["time"]-10,np.log10(minparam["resid"])-0.045], fontsize=15)
+				plt.annotate("%.2f" %minparam["sigres"], xy=[minparam["time"]-20,np.log10(minparam["resid"])-0.04], fontsize=15)
 
 
 
@@ -528,13 +529,18 @@ def displaycrudeopt(rung,pair,residuals,timesteps,magsteps,resmode,mode="sum",wo
 
 			resids = np.log10(resids)
 			confcolors=["blue", "green", "yellow", "red"]
-			plt.scatter(timemin,min(resids),s=350,c=confcolors[conflevel-1],marker="d",alpha=0.5)
+			plt.scatter(timemin,min(resids),s=650,c=confcolors[conflevel-1],marker="d",alpha=0.5)
 			plt.plot([truedelay,truedelay],[min(resids),max(resids)],'--',c='black',linewidth=2.5, alpha=0.5)
-			sc = plt.scatter(times,resids,s=50,c=sigstdmags)
+			sc = plt.scatter(times,resids,s=70,c=sigstdmags)
 			plt.plot(times,resids,'k--')
-			cbar = plt.colorbar(sc)
-			cbar.set_label("mean seasonal magnitude shift [sigma]", fontsize=15)
+
+			cbaxes = fig.add_axes([0.88, 0.1, 0.03, 0.83])
+			cbar = plt.colorbar(sc,cax=cbaxes)
+			cbar.set_label(r"shift deviation [$\xi$]", fontsize=15,labelpad=-60)
 			cbar.ax.tick_params(labelsize=15)
+
+
+
 
 		elif mode == "individual":
 		
@@ -597,8 +603,8 @@ def displaycrudeopt(rung,pair,residuals,timesteps,magsteps,resmode,mode="sum",wo
 if __name__ == "__main__":
 
 
-	rung = 1
-	pair = 224
+	rung = 4
+	pair = 986
 
 	workdir = 'tdc1_%i_%i' %(rung,pair)
 	if not os.path.isdir(workdir):
