@@ -22,8 +22,28 @@ def rmsd(delta):
 def med(delta):
 	return np.median(np.fabs(delta))
 
+def meanbest(pi):
+	if len(np.asarray(pi)) < 3:
+		return 0.0
+	
+	#print pi
+	medpi = np.median(pi)
+	#print medpi
+	#print pi <= medpi
+	return np.mean(np.asarray(pi)[np.asarray(pi) <= medpi])
 
-print "do a search replace doupla - douplapla to switch me"
+def rmsbest(delta):
+
+	squares = np.asarray(delta)**2.0
+	med = np.median(squares)
+	
+	return np.sqrt(np.mean(np.asarray(squares)[squares <= med]))
+
+
+
+gridsize = 8
+mincnt = 4
+
 
 
 
@@ -33,10 +53,6 @@ db = pycs.gen.util.readpickle(pklfilepath)
 db = db.values()
 
 db = [item for item in db if item["in_tdc1"] == 1] # No need for the other ones
-
-# computing overlap (fucked up in db for truetd < 5, why why why ??? FUCK)
-for item in db:
-	item["overlap"] = item["nseas"] * np.clip(item["meanseaslen"] - abs(item["truetd"]), 0.0, item["meanseaslen"])
 
 print "Starting with db length", len(db)
 
@@ -60,31 +76,15 @@ print "rejection of %i points" % (inilen - len(db))
 meansamplings = np.array([item["meansampling"] for item in db])
 nseas = np.array([item["nseas"] for item in db])
 nepochs = np.array([item["nepochs"] for item in db])
-overlaps = np.array([item["overlap"] for item in db])
-sizes = ((overlaps/1200.0)*50.0 + 10.0)**2.0
-
-
-#plt.hist(overlaps)
-#plt.show()
-#exit()
 
 medmagerrAs = np.array([item["medmagerrA"] for item in db])
 medmagerrBs = np.array([item["medmagerrB"] for item in db])
-
-#print medmagerrAs
-#print medmagerrBs
-
 medmagerrstack = np.vstack([medmagerrAs, medmagerrBs])
-
-#print medmagerrstack.shape
-
 minmagerrs = np.min(medmagerrstack, axis=0)
 maxmagerrs = np.max(medmagerrstack, axis=0)
 
 
 truetds = np.array([item["truetd"] for item in db])
-
-
 abstruetds = np.fabs(truetds)
 
 subtds = np.array([item[subname + "_td"] for item in db])
@@ -102,68 +102,88 @@ pterms = subtderrs/np.fabs(truetds)
 
 
 
-fig = plt.figure(figsize=(20, 11))
+fig = plt.figure(figsize=(10, 7.6))
 
 
 
 cmap = matplotlib.cm.get_cmap("rainbow")
 
 
-ax = fig.add_subplot(2, 3, 1)	
 
-ax.xaxis.set_minor_locator(AutoMinorLocator(5))
-ax.yaxis.set_minor_locator(AutoMinorLocator(5))
-
-ax.set_yscale('log', nonposy='clip')
-
-cmap = matplotlib.cm.get_cmap("rainbow")
-
-stuff = ax.scatter(abstruetds, maxmagerrs, s=30, c=pterms, marker="o", lw=0, cmap=cmap, vmin=5e-3, vmax=3, norm=matplotlib.colors.LogNorm())
-
-divider = make_axes_locatable(ax)
-cax = divider.append_axes("right", "5%", pad="3%")
-cax = plt.colorbar(stuff, cax, ticks = LogLocator(subs=range(10)))
-cax.set_label("$P_i$")
-#cax.ax.minorticks_on()
-#minorticks = cax.norm(np.linspace(0.0, 1.0, 10))
-#cax.ax.yaxis.set_ticks(minorticks, minor=True)
-
-ax.set_xlabel("$|\Delta t_i|$ [day]")
-ax.set_ylabel("Median photometric error of fainter image [mag]")
-
-ax.set_xlim(0, 120)
-ax.set_ylim(4e-3 ,6e-1)
-ax.annotate("3-day cadence, 5 x 4-month seasons (rungs 2 & 3)", xy=(0.0, 1.0), xycoords='axes fraction', xytext=(8, -8), textcoords='offset points', ha='left', va='top')
-
-
-
-ax = fig.add_subplot(2, 3, 2)	
+ax = fig.add_subplot(2, 2, 1)	
 ax.xaxis.set_minor_locator(AutoMinorLocator(5))
 ax.yaxis.set_minor_locator(AutoMinorLocator(5))
 
 stuff = ax.hexbin(abstruetds, maxmagerrs, C=pterms,
-	vmin=5e-3, vmax=3.0, cmap=cmap, reduce_C_function=np.mean,
-	xscale = 'linear', yscale = 'log', mincnt=3, norm=matplotlib.colors.LogNorm(),
-	gridsize = 8
+	vmin=5e-3, vmax=1.0, cmap=cmap, reduce_C_function=np.mean,
+	xscale = 'linear', yscale = 'log', mincnt=mincnt, norm=matplotlib.colors.LogNorm(),
+	gridsize = gridsize
 	)
 divider = make_axes_locatable(ax)
-cax = divider.append_axes("right", "5%", pad="3%")
+cax = divider.append_axes("right", "8%", pad="3%")
 cax = plt.colorbar(stuff, cax, ticks = LogLocator(subs=range(10)))
-cax.set_label("mean($P_i$)")
+cax.set_label("$P$", fontsize=14)
 
 
-ax.set_xlabel("$|\Delta t_i|$ [day]")
-ax.set_ylabel("Median photometric error of fainter image [mag]")
+ax.set_xlabel("$|\Delta t_i|$ [day]", fontsize=12)
+ax.set_ylabel("Phot. precision of fainter image [mag]", fontsize=12)
 ax.set_xlim(0, 120)
 ax.set_ylim(4e-3 ,6e-1)
+#ax.set_ylim(4e-3, 2.7)
+ax.annotate("5 x 4 months, 3-day cadence", xy=(0.0, 1.0), xycoords='axes fraction', xytext=(8, -8), textcoords='offset points', ha='left', va='top')
 
 
-ax = fig.add_subplot(2, 3, 3)
+ax = fig.add_subplot(2, 2, 2)
+ax.xaxis.set_minor_locator(AutoMinorLocator(5))
+ax.yaxis.set_minor_locator(AutoMinorLocator(5))
+
+stuff = ax.hexbin(abstruetds, maxmagerrs, C=subtdoffs/truetds,
+	vmin=5e-3, vmax=1.0, cmap=cmap, reduce_C_function=rmsd,
+	xscale = 'linear', yscale = 'log', mincnt=mincnt,
+	norm=matplotlib.colors.LogNorm(),
+	gridsize = gridsize
+	)
+divider = make_axes_locatable(ax)
+cax = divider.append_axes("right", "8%", pad="3%")
+cax = plt.colorbar(stuff, cax, ticks = matplotlib.ticker.LogLocator(subs=range(10)))
+cax.set_label(r"$\mathrm{RMS}((\widetilde{\Delta t_i} - \Delta t_i) / \Delta t_i)$", fontsize=14)
+		
+ax.set_xlabel("$|\Delta t_i|$ [day]", fontsize=12)
+ax.set_ylabel("Phot. precision of fainter image [mag]", fontsize=12)
+ax.set_xlim(0, 120)
+ax.set_ylim(4e-3 ,6e-1)
+#ax.set_ylim(4e-3, 2.7)
+ax.annotate("5 x 4 months, 3-day cadence", xy=(0.0, 1.0), xycoords='axes fraction', xytext=(8, -8), textcoords='offset points', ha='left', va='top')
 
 
-# scatter plot of p_i in bins as a function of rms of residuals
+ax = fig.add_subplot(2, 2, 3)	
+ax.xaxis.set_minor_locator(AutoMinorLocator(5))
+ax.yaxis.set_minor_locator(AutoMinorLocator(5))
+
+stuff = ax.hexbin(abstruetds, maxmagerrs, C=pterms,
+	vmin=5e-3, vmax=1.0, cmap=cmap, reduce_C_function=meanbest,
+	xscale = 'linear', yscale = 'log', mincnt=2*mincnt, norm=matplotlib.colors.LogNorm(),
+	gridsize = gridsize
+	)
+divider = make_axes_locatable(ax)
+cax = divider.append_axes("right", "8%", pad="3%")
+cax = plt.colorbar(stuff, cax, ticks = LogLocator(subs=range(10)))
+cax.set_label("$P$", fontsize=14)
 
 
+ax.set_xlabel("$|\Delta t_i|$ [day]", fontsize=12)
+ax.set_ylabel("Phot. precision of fainter image [mag]", fontsize=12)
+ax.set_xlim(0, 120)
+ax.set_ylim(4e-3 ,6e-1)
+#ax.set_ylim(4e-3, 2.7)
+ax.annotate("5 x 4 months, 3-day cadence", xy=(0.0, 1.0), xycoords='axes fraction', xytext=(8, -8), textcoords='offset points', ha='left', va='top')
+ax.annotate(r"Best half of $\tilde{P_i}$s in each tile", xy=(0.0, 1.0), xycoords='axes fraction', xytext=(8, -20), textcoords='offset points', ha='left', va='top')
+
+
+ax = fig.add_subplot(2, 2, 4)
+
+
+"""
 a = subtderrs
 b = np.fabs(subtdoffs) / subtderrs
 nbins = 5
@@ -210,66 +230,30 @@ ax.set_xlabel("$\delta_i$ [day]")
 ax.set_ylabel("RMS$(\widetilde{\Delta t_i} - \Delta t_i) / \delta_i$")
 
 
+"""
 
 
-ax = fig.add_subplot(2, 3, 4)
-ax.set_yscale('log', nonposy='clip')
-stuff = ax.scatter(abstruetds, maxmagerrs, s=30, c=abssubtdoffs, marker="o", lw=0, cmap=cmap, vmin=0.01, vmax=10.0, norm=matplotlib.colors.LogNorm())
+ax.xaxis.set_minor_locator(AutoMinorLocator(5))
+ax.yaxis.set_minor_locator(AutoMinorLocator(5))
 
-
-divider = make_axes_locatable(ax)
-cax = divider.append_axes("right", "5%", pad="3%")
-cax = plt.colorbar(stuff, cax, ticks = matplotlib.ticker.LogLocator(subs=range(10)))
-cax.set_label("$|\widetilde{\Delta t_i} - \Delta t_i|$ [day]")
-		
-ax.set_xlabel("$|\Delta t_i|$ [day]")
-ax.set_ylabel("Median photometric error of fainter image [mag]")
-ax.set_xlim(0, 120)
-ax.set_ylim(4e-3 ,6e-1)
-
-
-
-
-
-
-ax = fig.add_subplot(2, 3, 5)
-
-stuff = ax.hexbin(abstruetds, maxmagerrs, C=subtdoffs,
-	vmin=0.0, vmax=5.0, cmap=cmap, reduce_C_function=rmsd,
-	xscale = 'linear', yscale = 'log', mincnt=10,
-	gridsize = 6
+stuff = ax.hexbin(abstruetds, maxmagerrs, C=chi2terms,
+	vmin=0.0, vmax=2.0, cmap=cmap, reduce_C_function=np.mean,
+	xscale = 'linear', yscale = 'log', mincnt=mincnt,
+	#norm=matplotlib.colors.LogNorm(),
+	gridsize = 4
 	)
 divider = make_axes_locatable(ax)
-cax = divider.append_axes("right", "5%", pad="3%")
-cax = plt.colorbar(stuff, cax)
-cax.set_label("RMS $(\widetilde{\Delta t_i} - \Delta t_i)$ [day]")
+cax = divider.append_axes("right", "8%", pad="3%")
+cax = plt.colorbar(stuff, cax)#, ticks = matplotlib.ticker.LogLocator(subs=range(10)))
+cax.set_label(r"$\chi^2$", fontsize=16)
 		
-ax.set_xlabel("$|\Delta t_i|$ [day]")
-ax.set_ylabel("Median photometric error of fainter image [mag]")
+ax.set_xlabel("$|\Delta t_i|$ [day]", fontsize=12)
+ax.set_ylabel("Phot. precision of fainter image [mag]", fontsize=12)
 ax.set_xlim(0, 120)
 ax.set_ylim(4e-3 ,6e-1)
-
-
-
-
-ax = fig.add_subplot(2, 3, 6)
-
-stuff = ax.hexbin(abstruetds, maxmagerrs, C=subtdoffs/truetds,
-	vmin=5e-3, vmax=3.0, cmap=cmap, reduce_C_function=rmsd,
-	xscale = 'linear', yscale = 'log', mincnt=3,
-	norm=matplotlib.colors.LogNorm(),
-	gridsize = 8
-	)
-divider = make_axes_locatable(ax)
-cax = divider.append_axes("right", "5%", pad="3%")
-cax = plt.colorbar(stuff, cax, ticks = matplotlib.ticker.LogLocator(subs=range(10)))
-cax.set_label("RMS $((\widetilde{\Delta t_i} - \Delta t_i) / \Delta t_i)$ [day]")
-		
-ax.set_xlabel("$|\Delta t_i|$ [day]")
-ax.set_ylabel("Median photometric error of fainter image [mag]")
-ax.set_xlim(0, 120)
-ax.set_ylim(4e-3 ,6e-1)
-
+#ax.set_ylim(4e-3, 2.7)
+#ax.annotate("5 x 4 months, 3-day cadence", xy=(0.0, 1.0), xycoords='axes fraction', xytext=(8, -8), textcoords='offset points', ha='left', va='top')
+#ax.annotate("Best half in each tile", xy=(0.0, 1.0), xycoords='axes fraction', xytext=(8, -20), textcoords='offset points', ha='left', va='top')
 
 
 

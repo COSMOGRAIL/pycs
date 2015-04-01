@@ -37,7 +37,7 @@ for rung in range(5):
 		db[pairid]["in_tdc1"] = 1
 
 
-# Read xtrastats again, it seems this was fucked up as well for truetd < 5 ... I'M FUCKING ANGRY
+# Read xtrastats again, this was missing as well for truetd < 5 it seems
 xtrastatsdir = "/users/mtewes/TDC/pycs_svn_tdc1/results_tdc1/xtrastats"
 
 for rung in range(5):

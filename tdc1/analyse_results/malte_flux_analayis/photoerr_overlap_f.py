@@ -25,45 +25,7 @@ def med(delta):
 print "do a search replace doupla - douplapla to switch me"
 
 
-"""
 
-db = pycs.gen.util.readpickle("../db.pkl")
-
-# Given that the flag "in_tdc1" has been fucked up (related to truetd > 5), we just overwrite it
-# with its original meaning.
-for rung in range(5):
-	for pair in range(1, 1037):
-		pairid = "%s_%i_%i" % ("tdc1", rung, pair)
-		db[pairid]["in_tdc1"] = 0
-	for pair in pycs.tdc.util.listtdc1v2pairs():
-		pairid = "%s_%i_%i" % ("tdc1", rung, pair)
-		db[pairid]["in_tdc1"] = 1
-
-
-# Read xtrastats again, it seems this was fucked up as well for truetd < 5 ... I'M FUCKING ANGRY
-xtrastatsdir = "/users/mtewes/TDC/pycs_svn_tdc1/results_tdc1/xtrastats"
-
-for rung in range(5):
-	print rung
-	for pair in pycs.tdc.util.listtdc1v2pairs():
-		pairid = "%s_%i_%i" % ("tdc1", rung, pair)
-
-		relfilepath = pycs.tdc.util.tdcfilepath(set="tdc1", rung=rung, pair=pair, skipset=False)
-		pklpath = os.path.join(xtrastatsdir, relfilepath+".stats.pkl")
-		if os.path.exists(pklpath):
-
-			data = pycs.gen.util.readpickle(pklpath, verbose=False)
-			db[pairid].update(data)
-			
-			if "nseas" not in data:
-				print "no nseas", pairid
-		
-		else:
-			print "prob with", pairid
-
-pycs.gen.util.writepickle(db, pklfilepath)
-
-"""
 
 db = pycs.gen.util.readpickle(pklfilepath)
 
