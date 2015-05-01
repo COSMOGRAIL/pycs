@@ -45,7 +45,7 @@ gridsize = 8
 mincnt = 4
 
 
-txt = "5 x 8 months, 3-day cadence"
+txt = "10 x 4 months, 6-day cadence"
 
 
 
@@ -63,7 +63,7 @@ subname = "pycs_tdc1_spl-vanilla-doupla-full"
 db = [item for item in db if subname + "_td" in item]
 
 
-db = [item for item in db if item["rung"] in [0]]
+db = [item for item in db if item["rung"] in [4]]
 
 inilen = len(db)
 print "before outlier rejection: %i points" % (inilen)
