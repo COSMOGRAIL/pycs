@@ -45,6 +45,7 @@ gridsize = 8
 mincnt = 4
 
 
+txt = "5 x 8 months, 3-day cadence (rung 0)"
 
 
 
@@ -62,7 +63,7 @@ subname = "pycs_tdc1_spl-vanilla-doupla-full"
 db = [item for item in db if subname + "_td" in item]
 
 
-db = [item for item in db if item["rung"] in [2, 3]]
+db = [item for item in db if item["rung"] in [0]]
 
 inilen = len(db)
 print "before outlier rejection: %i points" % (inilen)
@@ -102,6 +103,12 @@ pterms = subtderrs/np.fabs(truetds)
 
 
 
+#plt.hist(abstruetds)
+#plt.show()
+
+#exit()
+
+
 fig = plt.figure(figsize=(10.2, 7.6))
 
 
@@ -130,7 +137,7 @@ ax.set_ylabel("Phot. precision of fainter image [mag]", fontsize=12)
 ax.set_xlim(0, 120)
 ax.set_ylim(4e-3 ,6e-1)
 #ax.set_ylim(4e-3, 2.7)
-ax.annotate("5 x 4 months, 3-day cadence", xy=(0.0, 1.0), xycoords='axes fraction', xytext=(8, -8), textcoords='offset points', ha='left', va='top')
+ax.annotate(txt, xy=(0.0, 1.0), xycoords='axes fraction', xytext=(8, -8), textcoords='offset points', ha='left', va='top')
 
 
 ax = fig.add_subplot(2, 2, 2)
@@ -153,7 +160,7 @@ ax.set_ylabel("Phot. precision of fainter image [mag]", fontsize=12)
 ax.set_xlim(0, 120)
 ax.set_ylim(4e-3 ,6e-1)
 #ax.set_ylim(4e-3, 2.7)
-ax.annotate("5 x 4 months, 3-day cadence", xy=(0.0, 1.0), xycoords='axes fraction', xytext=(8, -8), textcoords='offset points', ha='left', va='top')
+ax.annotate(txt, xy=(0.0, 1.0), xycoords='axes fraction', xytext=(8, -8), textcoords='offset points', ha='left', va='top')
 
 
 ax = fig.add_subplot(2, 2, 3)	
@@ -176,11 +183,11 @@ ax.set_ylabel("Phot. precision of fainter image [mag]", fontsize=12)
 ax.set_xlim(0, 120)
 ax.set_ylim(4e-3 ,6e-1)
 #ax.set_ylim(4e-3, 2.7)
-ax.annotate("5 x 4 months, 3-day cadence", xy=(0.0, 1.0), xycoords='axes fraction', xytext=(8, -8), textcoords='offset points', ha='left', va='top')
+ax.annotate(txt, xy=(0.0, 1.0), xycoords='axes fraction', xytext=(8, -8), textcoords='offset points', ha='left', va='top')
 ax.annotate(r"Best half of $\tilde{P_i}$s in each tile", xy=(0.0, 1.0), xycoords='axes fraction', xytext=(8, -20), textcoords='offset points', ha='left', va='top')
 
 
-ax = fig.add_subplot(2, 2, 4)
+#ax = fig.add_subplot(2, 2, 4)
 
 
 """
@@ -233,27 +240,27 @@ ax.set_ylabel("RMS$(\widetilde{\Delta t_i} - \Delta t_i) / \delta_i$")
 """
 
 
-ax.xaxis.set_minor_locator(AutoMinorLocator(5))
-ax.yaxis.set_minor_locator(AutoMinorLocator(5))
-
-stuff = ax.hexbin(abstruetds, maxmagerrs, C=chi2terms,
-	vmin=0.0, vmax=2.0, cmap=cmap, reduce_C_function=np.mean,
-	xscale = 'linear', yscale = 'log', mincnt=mincnt,
-	#norm=matplotlib.colors.LogNorm(),
-	gridsize = 4
-	)
-divider = make_axes_locatable(ax)
-cax = divider.append_axes("right", "8%", pad="3%")
-cax = plt.colorbar(stuff, cax)#, ticks = matplotlib.ticker.LogLocator(subs=range(10)))
-cax.set_label(r"$\chi^2$", fontsize=16)
-		
-ax.set_xlabel("$|\Delta t|$ [day]", fontsize=12)
-ax.set_ylabel("Phot. precision of fainter image [mag]", fontsize=12)
-ax.set_xlim(0, 120)
-ax.set_ylim(4e-3 ,6e-1)
-#ax.set_ylim(4e-3, 2.7)
-#ax.annotate("5 x 4 months, 3-day cadence", xy=(0.0, 1.0), xycoords='axes fraction', xytext=(8, -8), textcoords='offset points', ha='left', va='top')
-#ax.annotate("Best half in each tile", xy=(0.0, 1.0), xycoords='axes fraction', xytext=(8, -20), textcoords='offset points', ha='left', va='top')
+#ax.xaxis.set_minor_locator(AutoMinorLocator(5))
+#ax.yaxis.set_minor_locator(AutoMinorLocator(5))
+#
+#stuff = ax.hexbin(abstruetds, maxmagerrs, C=chi2terms,
+#	vmin=0.0, vmax=2.0, cmap=cmap, reduce_C_function=np.mean,
+#	xscale = 'linear', yscale = 'log', mincnt=mincnt,
+#	#norm=matplotlib.colors.LogNorm(),
+#	gridsize = 4
+#	)
+#divider = make_axes_locatable(ax)
+#cax = divider.append_axes("right", "8%", pad="3%")
+#cax = plt.colorbar(stuff, cax)#, ticks = matplotlib.ticker.LogLocator(subs=range(10)))
+#cax.set_label(r"$\chi^2$", fontsize=16)
+#		
+#ax.set_xlabel("$|\Delta t|$ [day]", fontsize=12)
+#ax.set_ylabel("Phot. precision of fainter image [mag]", fontsize=12)
+#ax.set_xlim(0, 120)
+#ax.set_ylim(4e-3 ,6e-1)
+##ax.set_ylim(4e-3, 2.7)
+##ax.annotate("5 x 4 months, 3-day cadence", xy=(0.0, 1.0), xycoords='axes fraction', xytext=(8, -8), textcoords='offset points', ha='left', va='top')
+##ax.annotate("Best half in each tile", xy=(0.0, 1.0), xycoords='axes fraction', xytext=(8, -20), textcoords='offset points', ha='left', va='top')
 
 
 

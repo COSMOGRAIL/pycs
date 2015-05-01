@@ -65,6 +65,7 @@ fig.subplots_adjust(left=0.05, right=0.92, top=0.95, bottom=0.12, wspace=0.13)
 
 
 ax = fig.add_subplot(1, 3, 1)	
+ax.xaxis.set_minor_locator(AutoMinorLocator(5))
 
 
 dbsel = [item for item in db if item["rung"] in [2, 3]]
@@ -103,6 +104,7 @@ ax.set_ylim(4e-3, 2.7)
 
 
 ax = fig.add_subplot(1, 3, 2)	
+ax.xaxis.set_minor_locator(AutoMinorLocator(5))
 
 stuff = ax.hexbin(abstruetds, maxmagerrs, C=isindouplas,
 	vmin=0.0, vmax=1.0, cmap=cmap, reduce_C_function=np.mean,
@@ -139,6 +141,7 @@ ax.set_ylim(4e-3, 2.7)
 
 
 ax = fig.add_subplot(1, 3, 3)	
+ax.xaxis.set_minor_locator(AutoMinorLocator(5))
 
 
 dbsel = [item for item in db if item["rung"] in [1]]
@@ -170,7 +173,7 @@ stuff = ax.hexbin(abstruetds, maxmagerrs, C=isindouplas,
 cax = fig.add_axes([0.94, 0.12, 0.02, 0.83])
 fig.colorbar(stuff, cax=cax)
 cax = plt.colorbar(stuff, cax)
-cax.set_label('Fraction of measured delays', fontsize=14)
+cax.set_label('Fraction of discovered delays', fontsize=14)
 	
 ax.set_xlabel("$|\Delta t|$ [day]", fontsize=16)
 #ax.set_ylabel("Median photometric error of fainter image [mag]")
