@@ -20,7 +20,7 @@ execfile('../config.py')
 db = {} # we'll use a dictionnary for building the big unique db, easier to index, and convert it to a list later.
 
 for rung in range(5):
-	for pair in range(1, 1037):
+	for pair in range(0, 1038):
 		pairid = "%s_%i_%i" % ("tdc1", rung, pair)
 		db[pairid] = {"rung":rung, "pair":pair, "in_tdc1":0} # By default, a pair is not in tdc1.
 
@@ -57,7 +57,7 @@ for rung in range(5):
 
 		# Pairs such that truetd < 10 are discarded for the analysis
 		if abs(db[pairid]["truetd"]) <10.0:
-			db[pairid]["in_tdc1"] = 0 
+			db[pairid]["in_tdc1"] = 1
 print "Done with truth..."
 
 
@@ -66,9 +66,12 @@ print "Done with truth..."
 
 def addsubmission(db, subpath):
 
+	print '='*5, subpath, '='*5
 	# read the submission	
 	subinfos = pycs.tdc.util.readsubmission(subpath)
-	subname = os.path.basename(subpath).split('.dt')[0]
+
+	# rename if a bugfix version exists:
+	subname = os.path.basename(subpath).split('.dt')[0].split('-bugfix')[0]
 
 	# add values
 	for info in subinfos:
@@ -89,13 +92,40 @@ def addsubmission(db, subpath):
 	
 		
 		
-# Now, add all pycs submissions
+# Now, add all pycs submissions, BUGFIXED version
 
 subdir = pycs_submissions
-submissions = [entry.split('\n')[0] for entry in os.popen('ls %s' % subdir)]		
+subdir_bugfix = pycs_submissions_bugfix
+
+submissions = [entry.split('\n')[0] for entry in os.popen('ls %s' % subdir)]
+submissions_bugfix = [entry.split('\n')[0] for entry in os.popen('ls %s' % subdir_bugfix) if 'bugfix' in entry]
+
+
+finalsubs = []
+
+for submission in submissions:
+	switch = 0
+	for submission_bugfix in submissions_bugfix:
+		if submission.split('.dt')[0] in submission_bugfix.split('.dt')[0]:
+			finalsubs.append([subdir_bugfix,submission_bugfix])
+			switch = 1
+	if switch == 0:
+		finalsubs.append([subdir,submission])
+
+for finalsub in finalsubs:
+	print finalsub[1]
+
+
+for finalsub in finalsubs:
+	addsubmission(db,os.path.join(finalsub[0],finalsub[1]))
+
+'''
+subdir = '../results_tdc1/submissions/bugfix'
+submissions = [entry.split('\n')[0] for entry in os.popen('ls %s' % subdir)]
 
 for submission in submissions:
 	addsubmission(db,os.path.join(subdir,submission))
+'''
 print "Done with submissions..."
 
 
@@ -222,10 +252,10 @@ print "Done with D3CS individual users..."
 
 # We keep it as a dict of dicts, it's easier to "query" in this way:
 
-pklfilepath = "db.pkl"
+pklfilepath = "dbwithout10days_bugfix.pkl"
 pycs.gen.util.writepickle(db, pklfilepath)
 
-print "="*50
-print "List of available keywords"
-for kw in db["tdc1_0_1"]:
-	print kw
+#print "="*50
+#print "List of available keywords"
+#for kw in db["tdc1_0_1"]:
+#	print kw

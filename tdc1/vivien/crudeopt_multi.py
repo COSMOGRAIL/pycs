@@ -1,8 +1,11 @@
+#!/usr/bin/env python
 import os, sys
 import pycs
 import numpy as np
 
-
+#import matplotlib
+#print matplotlib.__file__
+#sys.exit()
 """
 Like crudeopt, but run it on multiple curves
 basically, everything here is function
@@ -417,6 +420,8 @@ def getconfparams(residuals, workdir=".", mode="undefined"):
 #########################################################
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
+from matplotlib import rcParams
+
 
 def displaycrudeopt(rung,pair,residuals,timesteps,magsteps,resmode,mode="sum",workdir=".",savefig=False):
 	
@@ -488,13 +493,15 @@ def displaycrudeopt(rung,pair,residuals,timesteps,magsteps,resmode,mode="sum",wo
 			if line[0] == filename:
 				truedelay = float(line[1])*(-1.0)
 				
-		fig = plt.figure(figsize=(5,6))
-		plt.subplots_adjust(left=0.11, right=0.86, top=0.93, bottom=0.1)
+		fig = plt.figure(figsize=(8,6))
+		plt.subplots_adjust(left=0.12, right=0.86, top=0.97, bottom=0.1)
 		ax=fig.add_subplot(111)
-		plt.suptitle(filename, fontsize =15)
+		#plt.suptitle(filename, fontsize =15)
 		plt.xlabel('Time Shift [days]',fontsize=15)
-		plt.ylabel(r'absolute average residual [$log10(r_{\Delta t_{i}})$]', fontsize=15)
-		ax.yaxis.set_label_coords(0.08, 0.5)
+		#rcParams['mathtext.default'] = 'regular'
+		#rcParams['text.usetex']=True
+		plt.ylabel(r'absolute average residual -- {\huge $\rm{log_{10}}(r_{\rm{i}})$}', fontsize=15)
+		#ax.yaxis.set_label_coords(0.08, 0.5) # to move the label left or right
 		for tick in ax.xaxis.get_major_ticks():
 			tick.label.set_fontsize(15)
 		for tick in ax.yaxis.get_major_ticks():
@@ -517,8 +524,10 @@ def displaycrudeopt(rung,pair,residuals,timesteps,magsteps,resmode,mode="sum",wo
 			(sigresids, sigstdmags,minparams, conflevel) = getconfparams(residuals, workdir=workdir, mode=mode)
 			for minparam in minparams:
 				print minparam["time"],minparam["resid"]
-				plt.annotate("%.2f" %minparam["sigres"], xy=[minparam["time"]-20,np.log10(minparam["resid"])-0.04], fontsize=15)
-
+				if minparam["resid"] == min([minparampwet["resid"] for minparampwet in minparams]):
+					plt.annotate(r"$\mu = %.2f$" %minparam["sigres"], xy=[minparam["time"]-30,np.log10(minparam["resid"])-0.09], fontsize=20)
+				else:
+					plt.annotate(r"$%.2f$" %minparam["sigres"], xy=[minparam["time"]-30,np.log10(minparam["resid"])-0.09], fontsize=20)
 
 
 			# Get the best value from residuals
@@ -530,14 +539,17 @@ def displaycrudeopt(rung,pair,residuals,timesteps,magsteps,resmode,mode="sum",wo
 			resids = np.log10(resids)
 			confcolors=["blue", "green", "yellow", "red"]
 			plt.scatter(timemin,min(resids),s=650,c=confcolors[conflevel-1],marker="d",alpha=0.5)
-			plt.plot([truedelay,truedelay],[min(resids),max(resids)],'--',c='black',linewidth=2.5, alpha=0.5)
+			plt.plot([truedelay,truedelay],[min(resids),max(resids)],'--',c='black',linewidth=2.5, alpha=0.5, rasterized=True)
 			sc = plt.scatter(times,resids,s=70,c=sigstdmags)
 			plt.plot(times,resids,'k--')
 
-			cbaxes = fig.add_axes([0.88, 0.1, 0.03, 0.83])
+			cbaxes = fig.add_axes([0.87, 0.1, 0.03, 0.87])
 			cbar = plt.colorbar(sc,cax=cbaxes)
-			cbar.set_label(r"shift deviation [$\xi$]", fontsize=15,labelpad=-60)
 			cbar.ax.tick_params(labelsize=15)
+			rcParams['mathtext.default'] = 'regular'
+			rcParams['text.usetex']=True
+			cbar.set_label(r"microlensing variability {\huge $\xi$}", fontsize=15) #labelpad =-60
+
 
 
 
@@ -586,13 +598,16 @@ def displaycrudeopt(rung,pair,residuals,timesteps,magsteps,resmode,mode="sum",wo
 			plt.legend()	
 			plt.plot([truedelay,truedelay],[min([min(resids_sea) for resids_sea in resids_seas]),max([max(resids_sea) for resids_sea in resids_seas])],'--',c='indigo',linewidth=2.5)
 			
-				
+
+
 		if savefig==True:
 			plt.savefig("%s/plot_res_%s_%s.png" %(workdir,resmode,mode))
 			plt.close()
 		else:	
 			plt.show()
-		
+
+
+
 ##############
 ###   MAIN
 ##############
@@ -603,8 +618,8 @@ def displaycrudeopt(rung,pair,residuals,timesteps,magsteps,resmode,mode="sum",wo
 if __name__ == "__main__":
 
 
-	rung = 4
-	pair = 986
+	rung = 0
+	pair = 208
 
 	workdir = 'tdc1_%i_%i' %(rung,pair)
 	if not os.path.isdir(workdir):

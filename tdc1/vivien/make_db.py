@@ -11,6 +11,8 @@ Let's build a DB with:
 	- Crudeopt Values ! 	
 """
 
+#print "WAAAAAAARNING, this makedb is depreciated, use the one in analyse_results instead !!!"
+#sys.exit()
 
 datadir = "/home/vivien/modules/python/pycs-2/tdc1/vivien/"
 d3cslogpath = "../d3cs_logs/2014-06-07.txt"
@@ -20,7 +22,7 @@ d3cslogpath = "../d3cs_logs/2014-06-07.txt"
 db = {} # we'll use a dictionnary for building the big unique db, easier to index, and convert it to a list later.
 
 for rung in range(5):
-	for pair in range(1, 1037):
+	for pair in range(1, 1038):
 		pairid = "%s_%i_%i" % ("tdc1", rung, pair)
 		db[pairid] = {"rung":rung, "pair":pair, "in_tdc1":0} # By default, a pair is not in tdc1.
 
@@ -58,7 +60,7 @@ for rung in range(5):
 
 		# Pairs such that truetd < 10 are discarded for the analysis
 		if abs(db[pairid]["truetd"]) <10.0:
-			db[pairid]["in_tdc1"] = 0
+			db[pairid]["in_tdc1"] = 1
 		
 ##############   Add pycs submissions values  ##############
 
@@ -226,5 +228,5 @@ for methodpath in ["all-7"]:
 
 # We keep it as a dict of dicts, it's easier to "query" in this way:
 
-pklfilepath = "db.pkl"
+pklfilepath = "dbwithout10days.pkl"
 pycs.gen.util.writepickle(db, pklfilepath)

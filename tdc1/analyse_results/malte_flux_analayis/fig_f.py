@@ -95,7 +95,7 @@ ax.set_xlabel("$|\Delta t|$ [day]", fontsize=16)
 ax.set_ylabel("Phot. precision of fainter image [mag]", fontsize=14)
 
 #ax.annotate("3-day cadence, 5 x 4-month seasons (rungs 2, 3)", xy=(0.0, 1.0), xycoords='axes fraction', xytext=(8, -8), textcoords='offset points', ha='left', va='top')
-ax.annotate('Fraction of "doubtless" delays', xy=(0.0, 1.0), xycoords='axes fraction', xytext=(8, -8), textcoords='offset points', ha='left', va='top')
+ax.annotate('Fraction of "secure" delays', xy=(0.0, 1.0), xycoords='axes fraction', xytext=(8, -8), textcoords='offset points', ha='left', va='top')
 ax.annotate("5 x 4 months, 3-day cadence (rungs 2 & 3)", xy=(0.0, 1.0), xycoords='axes fraction', xytext=(8, -22), textcoords='offset points', ha='left', va='top')
 
 ax.set_xlim(tmin, tmax)
@@ -126,7 +126,7 @@ ax.set_xlabel("$|\Delta t|$ [day]", fontsize=16)
 #ax.set_ylabel("Median photometric error of fainter image [mag]")
 
 #ax.annotate("3-day cadence, 5 x 4-month seasons (rungs 2, 3)", xy=(0.0, 1.0), xycoords='axes fraction', xytext=(8, -8), textcoords='offset points', ha='left', va='top')
-ax.annotate('Fraction of "plausible" & "doubtless" delays', xy=(0.0, 1.0), xycoords='axes fraction', xytext=(8, -8), textcoords='offset points', ha='left', va='top')
+ax.annotate('Fraction of "plausible" & "secure" delays', xy=(0.0, 1.0), xycoords='axes fraction', xytext=(8, -8), textcoords='offset points', ha='left', va='top')
 ax.annotate("5 x 4 months, 3-day cadence (rungs 2 & 3)", xy=(0.0, 1.0), xycoords='axes fraction', xytext=(8, -22), textcoords='offset points', ha='left', va='top')
 
 ax.set_xlim(tmin, tmax)
@@ -179,7 +179,7 @@ ax.set_xlabel("$|\Delta t|$ [day]", fontsize=16)
 #ax.set_ylabel("Median photometric error of fainter image [mag]")
 
 #ax.annotate("3-day cadence, 5 x 4-month seasons (rungs 2, 3)", xy=(0.0, 1.0), xycoords='axes fraction', xytext=(8, -8), textcoords='offset points', ha='left', va='top')
-ax.annotate('Fraction of "plausible" & "doubtless" delays', xy=(0.0, 1.0), xycoords='axes fraction', xytext=(8, -8), textcoords='offset points', ha='left', va='top')
+ax.annotate('Fraction of "plausible" & "secure" delays', xy=(0.0, 1.0), xycoords='axes fraction', xytext=(8, -8), textcoords='offset points', ha='left', va='top')
 ax.annotate("10 x 4 months, 3-day cadence (rung 1)", xy=(0.0, 1.0), xycoords='axes fraction', xytext=(8, -22), textcoords='offset points', ha='left', va='top')
 
 ax.set_xlim(tmin, tmax)
